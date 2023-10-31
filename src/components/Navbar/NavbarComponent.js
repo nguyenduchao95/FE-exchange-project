@@ -8,18 +8,21 @@ import icon_user from '../../image/icons8-user-50.png';
 import {useEffect} from "react";
 import image_default from '../../image/user-image.png';
 import {format} from "date-fns";
+import {removeAccount} from "../../service/accountService";
 
 const Navbar = () => {
-    const {account, unreadMessage, unreadNotify, notifyList} = useSelector((state) => state);
+    const {unreadMessage, unreadNotify, notifyList} = useSelector((state) => state);
     const dispatch = useDispatch();
-
-
+    const account = useSelector(state => {
+        return state.account.account;
+    })
     const handleLogout = () => {
-        localStorage.removeItem("account");
-        dispatch(deleteAccount());
+        dispatch(removeAccount());
+        localStorage.removeItem('account')
     }
 
     return (
+
         <div className="container-fluid nav-bar py-2 mb-5 sticky-top">
             <nav className="navbar navbar-expand-lg navbar-light py-0 px-4">
                 <Link to={"/"} className="navbar-brand d-flex align-items-center text-center">
@@ -42,7 +45,7 @@ const Navbar = () => {
                                         <img className="img-thumbnail rounded-circle me-2"
                                              src={account.avatar ? account.avatar : icon_user} alt=""
                                              width={40} style={{height: '40px'}}/>
-                                        {account.username}
+                                        {account.name ? account.name : ''}
                                     </button>
 
                                     <ul className="dropdown-menu">
@@ -76,7 +79,7 @@ const Navbar = () => {
 
                                 <div className="nav-item dropdown">
                                     <button className="nav-link dropdown-toggle" data-bs-toggle="dropdown"
-                                            >
+                                    >
                                         <i className="bi bi-bell-fill"></i>
                                         {unreadNotify ?
                                             <sup className="badge text-white bg-danger position-absolute top-0 start-50"
@@ -89,8 +92,9 @@ const Navbar = () => {
                                     </button>
                                     <div className="dropdown-menu dropdown-notify">
                                         {!_.isEmpty(notifyList) && notifyList.map(item => (
-                                            <Link to={`/${item.navigate}`} className="d-flex align-items-center py-2 px-3 dropdown-notify-item"
-                                                 key={item.id}>
+                                            <Link to={`/${item.navigate}`}
+                                                  className="d-flex align-items-center py-2 px-3 dropdown-notify-item"
+                                                  key={item.id}>
                                                 <img className="img-thumbnail rounded-circle"
                                                      src={item.sender.avatar ? item.sender.avatar : image_default}
                                                      alt="" width={50}

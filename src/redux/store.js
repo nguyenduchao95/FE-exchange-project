@@ -1,5 +1,8 @@
-import {applyMiddleware, createStore} from 'redux';
-import thunk from "redux-thunk";
-import {accountInfo} from "./reducers";
+import accountReducer from "./reducer/accountSlice"
+import {configureStore} from "@reduxjs/toolkit";
 
-export const store = createStore(accountInfo, applyMiddleware(thunk));
+export const store = configureStore({
+    reducer: {
+        account: accountReducer
+    }
+})
