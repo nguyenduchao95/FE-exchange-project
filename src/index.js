@@ -9,13 +9,16 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import {BrowserRouter} from "react-router-dom";
 import {Provider} from "react-redux";
 import {store} from "./redux/store";
+import WebSocketProvider from "./components/WebSocket/WebSocketProvider";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     // <React.StrictMode>
     <Provider store={store}>
         <BrowserRouter>
-            <App/>
+            <WebSocketProvider>
+                <App/>
+            </WebSocketProvider>
         </BrowserRouter>
     </Provider>
     // </React.StrictMode>

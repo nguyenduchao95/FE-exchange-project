@@ -1,12 +1,12 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8080"
-const getAllPosts = (page = 0, size = 12) => {
-    return axios.get(`${API_URL}/api/posts?page=${page}&size=${size}`);
+const API_URL = "http://localhost:8080/api/posts"
+const getAllPosts = (page = 0, size = 12, status = '', username = '', title = '') => {
+    return axios.get(`${API_URL}?page=${page}&size=${size}&username=${username}&title=${title}`);
 }
 
 const getPostById = (postId) => {
-    return axios.get(`${API_URL}/api/posts/${postId}`);
+    return axios.get(`${API_URL}/${postId}`);
 }
 
 export {

@@ -5,16 +5,7 @@ const formatCurrency = (price) => {
 }
 
 const formatDate = (date) => {
-  return date.split("-").reverse().join("/");
-}
-
-const convertDateFormat = (input) => {
-  return format(new Date(input), "dd/MM/yyyy HH:mm");
-}
-
-const getTotalDays = (startDate, endDate) => {
-  if (!startDate || !endDate) return 0;
-  return Math.round((endDate - startDate) / (1000 * 60 * 60 * 24));
+  return format(new Date(date), "dd/MM/yyyy");
 }
 
 const formatDateTimeMessage = (dateString) => {
@@ -34,4 +25,4 @@ const formatDateTimeMessage = (dateString) => {
   return `${hours}:${minutes}, ${dates}/${months}/${years}`;
 }
 
-export {formatCurrency, formatDate, convertDateFormat, getTotalDays, formatDateTimeMessage};
+export {formatCurrency, formatDate, formatDateTimeMessage};

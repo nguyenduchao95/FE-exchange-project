@@ -5,9 +5,14 @@ import {Navigate, Route, Routes} from "react-router-dom";
 import NavbarComponent from "./components/Navbar/NavbarComponent";
 import Footer from "./components/Footer/Footer";
 import HomePage from "./components/HomePage/HomePage";
-import Component404 from "./errorClient/Component404";
-import Component403 from "./errorClient/Component403";
+import Component404 from "./components/404/Component404";
+import Component403 from "./components/403/Component403";
 import PostDetail from "./components/PostDetail/PostDetail";
+import Profile from "./components/Profile/Profile";
+import UserList from "./components/Profile/UserList/UserList";
+import PostList from "./components/Profile/PostList/PostList";
+import ChatBox from "./components/ChatBox/ChatBox";
+import AccountInformation from "./components/Profile/AccountInfomation/AccountInformation";
 
 
 function App() {
@@ -20,6 +25,12 @@ function App() {
                 <Route path={'*'} element={<Navigate to="/404" replace />}/>
                 <Route path="/404" element={<Component404/>}></Route>
                 <Route path={'/403'} element={<Component403/>}></Route>
+                <Route path="/chat" element={<ChatBox/>}/>
+                <Route path={"/account/"} element={<Profile/>}>
+                    <Route path="information" element={<AccountInformation/>}/>
+                    <Route path={"manage-posts"} element={<PostList/>}/>
+                    <Route path={"manage-users"} element={<UserList/>}/>
+                </Route>
             </Routes>
             <Footer/>
         </div>
