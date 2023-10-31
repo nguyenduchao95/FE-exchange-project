@@ -5,12 +5,12 @@ import Sidebar from "./Sidebar/Sidebar";
 import {useSelector} from "react-redux";
 
 const Profile = () => {
-    const account = useSelector(state => state.account);
+    const account = useSelector(state => state.myState.account);
     const navigate = useNavigate();
     useEffect(()=>{
-        /*if (_.isEmpty(account)){
+        if (_.isEmpty(account)){
             navigate("/403");
-        }*/
+        }
         window.scrollTo({
             top: 0,
             behavior: "smooth"
@@ -18,14 +18,14 @@ const Profile = () => {
     }, [account])
 
     return (
-        <div className="container-fluid">
+        <div className="container-fluid profile-exchange">
             <div className="bg-white mb-5">
-                {/*{!_.isEmpty(account) &&*/}
+                {!_.isEmpty(account) &&
                     <div className="row">
                         <Sidebar/>
                         <Outlet/>
                     </div>
-                {/*}*/}
+                }
             </div>
         </div>
     );

@@ -2,16 +2,17 @@ import React, {createContext, useEffect, useState} from 'react';
 import Stomp from "stompjs";
 import {useDispatch, useSelector} from "react-redux";
 import {toast} from "react-toastify";
-import {changeStatus, countUnreadMessage, countUnreadNotify, deleteAccount, editAccount} from "../../redux/actions";
 import _ from "lodash";
 import {useNavigate} from "react-router-dom";
 import {countUnreadMessagesByReceiverId} from "../../service/messageService";
+import {removeAccount} from "../../service/accountService";
+import {countUnreadMessage} from "../../redux/reducer/accountSlice";
 
 export const WebSocketContext = createContext(null)
 const WebSocketProvider = ({children}) => {
     const [notify, setNotify] = useState({});
     const [messageReceiver, setMessageReceiver] = useState({});
-    const account = useSelector(state => state.account);
+    const account = useSelector(state => state.myState.account);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     let socket;
@@ -46,7 +47,7 @@ const WebSocketProvider = ({children}) => {
     const onNotifyReceived = (payload) => {
         const data = JSON.parse(payload.body);
         if (data.content === 'Admin đã khóa tài khoản của bạn') {
-            dispatch(deleteAccount());
+            dispatch(removeAccount());
             localStorage.removeItem("account");
             navigate("/403");
         } else {

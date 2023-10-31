@@ -13,6 +13,8 @@ import UserList from "./components/Profile/UserList/UserList";
 import PostList from "./components/Profile/PostList/PostList";
 import ChatBox from "./components/ChatBox/ChatBox";
 import AccountInformation from "./components/Profile/AccountInfomation/AccountInformation";
+import Login from "./components/Login-Register/Login";
+import Register from "./components/Login-Register/Register";
 
 
 function App() {
@@ -21,6 +23,8 @@ function App() {
             <NavbarComponent/>
             <Routes>
                 <Route path={"/"} element={<HomePage/>}/>
+                <Route path={"/login"} element={<Login/>}/>
+                <Route path={"/register"} element={<Register/>}/>
                 <Route path={"/posts/:postId"} element={<PostDetail/>}/>
                 <Route path={'*'} element={<Navigate to="/404" replace />}/>
                 <Route path="/404" element={<Component404/>}></Route>

@@ -7,14 +7,14 @@ import {editAccountInformation} from "../../../service/accountService";
 import Swal from "sweetalert2";
 import {Modal} from "react-bootstrap";
 import {useDispatch, useSelector} from "react-redux";
-import {editAccount} from "../../../redux/actions";
+import {editAccount} from "../../../redux/reducer/accountSlice";
 
 const EditAccountInformation = ({accountInfo}) => {
     const [avatarFile, setAvatarFile] = useState(null);
     const [avatarURL, setAvatarURL] = useState(accountInfo.avatar ? accountInfo.avatar : "");
     const [show, setShow] = useState(false);
 
-    const account = useSelector(state => state.account);
+    const account = useSelector(state => state.myState.account);
     const dispatch = useDispatch();
 
     const avatarRef = useRef(null);
@@ -30,8 +30,15 @@ const EditAccountInformation = ({accountInfo}) => {
         const data = {...accountInfo, ...values};
         data.avatar = avatarURL;
         editAccountInformation(accountInfo.id, data).then(response => {
-            account.avatar = avatarURL;
-            dispatch(editAccount(account))
+            const accountEdit = {
+                ...account,
+                avatar: avatarURL,
+                phone:data.phone,
+                name: data.name,
+                address: data.address
+            }
+            dispatch(editAccount(accountEdit));
+            localStorage.setItem("account", JSON.stringify(accountEdit));
             Swal.fire({
                 icon: 'success',
                 title: 'Cập nhật thông tin thành công!',
@@ -51,7 +58,10 @@ const EditAccountInformation = ({accountInfo}) => {
     }
 
     const handleCloseModal = () => setShow(false);
-    const handleShowModal = () => setShow(true);
+    const handleShowModal = () => {
+        setShow(true);
+        setAvatarURL(accountInfo.avatar);
+    }
     return (
         <>
             <div className="mt-3 text-center">
@@ -64,9 +74,7 @@ const EditAccountInformation = ({accountInfo}) => {
                 <Formik
                     initialValues={{
                         name: accountInfo.name ? accountInfo.name : "",
-                        phoneNumber: accountInfo.phoneNumber ? accountInfo.phoneNumber : "",
-                        email: accountInfo.email ? accountInfo.email : "",
-                        dateOfBirth: accountInfo.dateOfBirth ? accountInfo.dateOfBirth : "",
+                        phone: accountInfo.phone ? accountInfo.phone : "",
                         avatar: accountInfo.avatar ? accountInfo.avatar : "",
                         address: accountInfo.address ? accountInfo.address : "",
                     }}
@@ -82,7 +90,7 @@ const EditAccountInformation = ({accountInfo}) => {
                             </Modal.Header>
                             <Modal.Body>
                                 <div className="row">
-                                    <div className="mb-3 col-6 col-sm-4">
+                                    <div className="mb-3 col-6">
                                         <label htmlFor="name" className="form-label">Họ và tên</label>
                                         <Field type="text" className="form-control" id="name"
                                                placeholder="Nhập họ và tên" name="name"/>
@@ -90,32 +98,17 @@ const EditAccountInformation = ({accountInfo}) => {
                                                       component="small"/>
                                     </div>
 
-                                    <div className="mb-3 col-6 col-sm-4">
-                                        <label htmlFor="dateOfBirth" className="form-label">Ngày sinh</label>
-                                        <Field type="date" className="form-control" id="dateOfBirth"
-                                               placeholder="Chọn ngày tháng năm" name="dateOfBirth"/>
-                                        <ErrorMessage name="dateOfBirth" className="text-danger"
-                                                      component="small"/>
-                                    </div>
-
                                     <div className="mb-3 col-6">
-                                        <label htmlFor="phoneNumber" className="form-label">
+                                        <label htmlFor="phone" className="form-label">
                                             Số điện thoại
                                         </label>
-                                        <Field type="text" className="form-control" id="phoneNumber"
-                                               placeholder="Nhập số điện thoại" name="phoneNumber"/>
-                                        <ErrorMessage name="phoneNumber" className="text-danger"
+                                        <Field type="text" className="form-control" id="phone"
+                                               placeholder="Nhập số điện thoại" name="phone"/>
+                                        <ErrorMessage name="phone" className="text-danger"
                                                       component="small"/>
                                     </div>
 
-                                    <div className="mb-3 col-12 col-sm-6">
-                                        <label htmlFor="email" className="form-label">Email</label>
-                                        <Field type="email" className="form-control" id="email"
-                                               placeholder="Nhập email" name="email"/>
-                                        <ErrorMessage name="email" className="text-danger" component="small"/>
-                                    </div>
-
-                                    <div className="col-12 col-sm-6 form-group mb-3">
+                                    <div className="col-6 form-group mb-3">
                                         <label className="form-label" htmlFor="address">
                                             Địa chỉ
                                         </label>
@@ -125,7 +118,7 @@ const EditAccountInformation = ({accountInfo}) => {
                                                       component="small"/>
                                     </div>
 
-                                    <div className="col-12 col-sm-6 mb-3">
+                                    <div className="col-6 col-sm-6 mb-3">
                                         <label htmlFor="avatar" className="form-label">Ảnh đại diện</label>
                                         <input type="file" className="form-control" id="avatar" name="avatar"
                                                ref={avatarRef}

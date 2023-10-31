@@ -23,7 +23,7 @@ const HomePage = () => {
         <div className="container-home">
 
             <div className="container">
-                <h2 className="text-center m-5">Danh sách </h2>
+                <h2 className="text-center m-5">Danh sách sản phẩm trao đổi</h2>
                 <Post posts={posts} totalPages={totalPages} changePage={changePage}/>
             </div>
         </div>

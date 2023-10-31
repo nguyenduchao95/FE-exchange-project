@@ -1,32 +1,30 @@
 import './navbar.scss';
-import icon_house from '../../image/icons8-house-60.png';
+import icon_house from '../../image/icons8-product.gif';
 import {Link} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import _ from 'lodash';
-import {countUnreadMessage, countUnreadNotify, deleteAccount, getAllNotify} from "../../redux/actions";
 import icon_user from '../../image/icons8-user-50.png';
-import {useEffect} from "react";
 import image_default from '../../image/user-image.png';
 import {format} from "date-fns";
+import {removeAccount} from "../../service/accountService";
 
 const Navbar = () => {
-    const {account, unreadMessage, unreadNotify, notifyList} = useSelector((state) => state);
+    const {unreadMessage, unreadNotify, notifyList, account} = useSelector(state => state.myState);
     const dispatch = useDispatch();
-
-
     const handleLogout = () => {
-        localStorage.removeItem("account");
-        dispatch(deleteAccount());
+        dispatch(removeAccount());
+        localStorage.removeItem('account');
     }
 
     return (
+
         <div className="container-fluid nav-bar py-2 mb-5 sticky-top">
             <nav className="navbar navbar-expand-lg navbar-light py-0 px-4">
                 <Link to={"/"} className="navbar-brand d-flex align-items-center text-center">
-                    <div className="me-1">
+                    <div className="me-2">
                         <img className="img-fluid" src={icon_house} alt="Icon"/>
                     </div>
-                    <h2 style={{color: "rgb(0,185,142)"}}>LUXURY</h2>
+                    <h2 style={{color: "rgb(0,185,142)"}}>EXCHANGE</h2>
                 </Link>
                 <div className="collapse navbar-collapse">
                     <div className="navbar-nav ms-auto navbar-custom">
@@ -42,12 +40,12 @@ const Navbar = () => {
                                         <img className="img-thumbnail rounded-circle me-2"
                                              src={account.avatar ? account.avatar : icon_user} alt=""
                                              width={40} style={{height: '40px'}}/>
-                                        {account.username}
+                                        {account.name ? account.name : ''}
                                     </button>
 
                                     <ul className="dropdown-menu">
                                         <li className="p-1">
-                                            <Link to="/profile/information" className="dropdown-item nav-link">
+                                            <Link to="/account/information" className="dropdown-item nav-link">
                                                 <i className="bi bi-person-bounding-box me-2"></i>Trang cá nhân
                                             </Link>
                                         </li>
@@ -76,7 +74,7 @@ const Navbar = () => {
 
                                 <div className="nav-item dropdown">
                                     <button className="nav-link dropdown-toggle" data-bs-toggle="dropdown"
-                                            >
+                                    >
                                         <i className="bi bi-bell-fill"></i>
                                         {unreadNotify ?
                                             <sup className="badge text-white bg-danger position-absolute top-0 start-50"
@@ -87,10 +85,12 @@ const Navbar = () => {
                                             null
                                         }
                                     </button>
-                                    <div className="dropdown-menu dropdown-notify">
-                                        {!_.isEmpty(notifyList) && notifyList.map(item => (
-                                            <Link to={`/${item.navigate}`} className="d-flex align-items-center py-2 px-3 dropdown-notify-item"
-                                                 key={item.id}>
+                                    {!_.isEmpty(notifyList) ?
+                                        <div className="dropdown-menu dropdown-notify">
+                                            {notifyList.map(item => (
+                                            <Link to={`/${item.navigate}`}
+                                                  className="d-flex align-items-center py-2 px-3 dropdown-notify-item"
+                                                  key={item.id}>
                                                 <img className="img-thumbnail rounded-circle"
                                                      src={item.sender.avatar ? item.sender.avatar : image_default}
                                                      alt="" width={50}
@@ -104,8 +104,11 @@ const Navbar = () => {
                                                     </small>
                                                 </div>
                                             </Link>
-                                        ))}
-                                    </div>
+                                            ))}
+                                        </div>
+                                        :
+                                        <div className="dropdown-menu d-none"></div>
+                                    }
                                 </div>
                             </div>
                         }

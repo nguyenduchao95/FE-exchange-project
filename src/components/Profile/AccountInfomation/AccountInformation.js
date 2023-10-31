@@ -8,7 +8,7 @@ import {useSelector} from "react-redux";
 
 const AccountInformation = () => {
     const [accountInfo, setAccountInfo] = useState({});
-    const account = useSelector(state => state.account);
+    const account = useSelector(state => state.myState.account);
 
     useEffect(() => {
         getAccountById(account.id).then(response => {
@@ -24,7 +24,7 @@ const AccountInformation = () => {
                 <div className="col-md-4">
                     <div className="d-flex flex-column align-items-center text-center px-3">
                         <span className="mb-2">Ảnh đại diện</span>
-                        <img className="rounded-circle" width="300px" height="300px"
+                        <img className="rounded-circle" width="200px" height="200px"
                              src={accountInfo.avatar ? accountInfo.avatar : image_default} alt="" id="image"
                              name="avatar"/>
                     </div>
@@ -39,16 +39,10 @@ const AccountInformation = () => {
                                 Họ và tên: {accountInfo.name ? accountInfo.name : 'Chưa có thông tin'}
                             </li>
                             <li className="list-group-item py-3">
-                                Ngày sinh: {accountInfo.dateOfBirth ? formatDate(accountInfo.dateOfBirth) : 'Chưa có thông tin'}
-                            </li>
-                            <li className="list-group-item py-3">
                                 Địa chỉ: {accountInfo.address ? accountInfo.address : 'Chưa có thông tin'}
                             </li>
                             <li className="list-group-item py-3">
-                                Email: {accountInfo.email}
-                            </li>
-                            <li className="list-group-item py-3">
-                                Số điện thoại: {accountInfo.phoneNumber ? accountInfo.phoneNumber : 'Chưa có thông tin'}
+                                Số điện thoại: {accountInfo.phone ? accountInfo.phone : 'Chưa có thông tin'}
                             </li>
                         </ul>
                     </div>

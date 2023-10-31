@@ -7,11 +7,11 @@ import {
     getAllMessagesBySenderIdAndReceiverId, saveMessage
 } from "../../service/messageService";
 import {formatDateTimeMessage} from "../../service/format";
-import {countUnreadMessage} from "../../redux/actions";
 import image_default from '../../image/user-image.png';
 import {WebSocketContext} from "../WebSocket/WebSocketProvider";
 import {listUserAndUnreadMessage, searchUsersMessage} from "../../service/accountService";
 import {useNavigate} from "react-router-dom";
+import {countUnreadMessage} from "../../redux/reducer/accountSlice";
 
 const ChatBox = () => {
         const [usersAndUnreadMessage, setUsersAndUnreadMessage] = useState([]);
@@ -19,7 +19,6 @@ const ChatBox = () => {
         const [message, setMessage] = useState("");
         const [search, setSearch] = useState("");
         const [usersSearch, setUsersSearch] = useState([]);
-        const account = useSelector(state => state.account);
         const [selectedAccount, setSelectedAccount] = useState({});
         const [render, setRender] = useState(true);
         const chatRef = useRef(null);
@@ -27,7 +26,8 @@ const ChatBox = () => {
         const navigate = useNavigate();
 
         const {sendMessage, messageReceiver} = useContext(WebSocketContext);
-        const {unreadMessage} = useSelector(state => state.unreadMessage);
+
+        const {unreadMessage, account} = useSelector(state => state.myState);
 
         useEffect(() => {
             if (_.isEmpty(account)) {
@@ -66,7 +66,7 @@ const ChatBox = () => {
                     console.log(error);
                 })
             }
-        }, [selectedAccount, render, messageReceiver])
+        }, [selectedAccount, render, messageReceiver, unreadMessage])
 
         useEffect(() => {
             if (chatRef.current) {
@@ -76,7 +76,7 @@ const ChatBox = () => {
 
         const handleSendMessage = () => {
             const data = {
-                message,
+                content: message,
                 sender: account,
                 receiver: {id: selectedAccount.id}
             };
@@ -184,14 +184,6 @@ const ChatBox = () => {
                                                         <h6 className="m-b-0">{selectedAccount.username}</h6>
                                                         {/*<small>Last seen: 2 hours ago</small>*/}
                                                     </div>
-                                                </div>
-                                                <div className="col-lg-6 hidden-sm text-end">
-                                                    <button className="btn btn-outline-info me-2">
-                                                        <i className="fa fa-cogs"></i>
-                                                    </button>
-                                                    <button className="btn btn-outline-warning">
-                                                        <i className="fa fa-question"></i>
-                                                    </button>
                                                 </div>
                                             </div>
                                         </div>

@@ -23,7 +23,7 @@ const PostDetail = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [product, setProduct] = useState({});
     const {postId} = useParams();
-    const account = useSelector(state => state.account);
+    const account = useSelector(state => state.myState.account);
 
     useEffect(() => {
         if (postId) {

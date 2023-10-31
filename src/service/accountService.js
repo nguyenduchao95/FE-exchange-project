@@ -1,4 +1,5 @@
 import instance from "./axiosConfig";
+import {createAsyncThunk} from "@reduxjs/toolkit";
 
 const API_URL = "/api/accounts";
 const getAllPostsByAccountId = (accountId, page = 0, size = 5) => {
@@ -17,7 +18,7 @@ const getAccountById = (id) => {
 }
 
 const editAccountInformation = (id, data) => {
-    return instance.put(`${API_URL}/information/${id}`, data);
+    return instance.put(`${API_URL}/${id}`, data);
 }
 
 const changeAccountPassword = (id, data) => {
@@ -43,3 +44,16 @@ export {
     checkPasswordById,
     checkEmail
 };
+
+export const getAccountLogin = createAsyncThunk(
+    "/login",
+    async (account) => {
+        return account;
+    }
+)
+export const removeAccount = createAsyncThunk(
+    "/removeAccount",
+    async () => {
+        return {};
+    }
+)
