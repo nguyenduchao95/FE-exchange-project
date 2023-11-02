@@ -4,7 +4,7 @@ import {useSelector} from "react-redux";
 import './sidebar.scss';
 
 const Sidebar = () => {
-    const account = useSelector(state => state.account);
+    const account = useSelector(state => state.myState.account);
 
     return (
         <div
@@ -28,21 +28,46 @@ const Sidebar = () => {
                                 </NavLink>
                             </li>
 
-                            <li className="px-3 py-2">
-                                <NavLink to="/account/manage-posts"
-                                         className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
-                                    <i className="fa-solid fa-rectangle-list me-3"></i>
-                                    <span className="hide-menu">Quản lý các bài đăng</span>
-                                </NavLink>
-                            </li>
+                            {
+                                account.role?.name === 'ROLE_USER' ?
+                                    <>
+                                    <li className="px-3 py-2">
+                                        <NavLink to="/account/exchange-history"
+                                                 className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+                                            <i className="fa-solid fa-clock-rotate-left me-3"></i>
+                                            <span className="hide-menu">Lịch sử trao đổi</span>
+                                        </NavLink>
+                                    </li>
+                                    <li className="px-3 py-2">
+                                        <NavLink to="/account/manage-posts-user"
+                                                 className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+                                            <i className="fa-solid fa-rectangle-list me-3"></i>
+                                            <span className="hide-menu">Quản lý các bài đăng của bạn</span>
+                                        </NavLink>
+                                    </li>
+                                    </>
+                                    :
+                                    account.role?.name === 'ROLE_ADMIN' ?
+                                        <>
+                                            <li className="px-3 py-2">
+                                                <NavLink to="/account/manage-posts-admin"
+                                                         className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+                                                    <i className="fa-solid fa-rectangle-list me-3"></i>
+                                                    <span className="hide-menu">Quản lý các bài đăng</span>
+                                                </NavLink>
+                                            </li>
 
-                            <li className="px-3 py-2">
-                                <NavLink to="/account/manage-users"
-                                         className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
-                                    <i className="fa-solid fa-address-card me-3"></i>
-                                    <span className="hide-menu">Quản lý các người dùng</span>
-                                </NavLink>
-                            </li>
+                                            <li className="px-3 py-2">
+                                                <NavLink to="/account/manage-users"
+                                                         className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+                                                    <i className="fa-solid fa-address-card me-3"></i>
+                                                    <span className="hide-menu">Quản lý các người dùng</span>
+                                                </NavLink>
+                                            </li>
+                                        </>
+                                        :
+                                        null
+                            }
                         </ul>
                     </nav>
                 </div>

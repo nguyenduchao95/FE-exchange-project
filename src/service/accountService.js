@@ -2,8 +2,8 @@ import instance from "./axiosConfig";
 import {createAsyncThunk} from "@reduxjs/toolkit";
 
 const API_URL = "/api/accounts";
-const getAllPostsByAccountId = (accountId, page = 0, size = 5) => {
-    return instance.get(`${API_URL}/${accountId}/posts?page=${page}&size=${size}`);
+const getAllPostsByAccountId = (accountId, page = 0, size = 5, data) => {
+    return instance.post(`${API_URL}/${accountId}/posts?page=${page}&size=${size}`, data);
 }
 
 const listUserAndUnreadMessage = (accountId) => {
@@ -21,16 +21,16 @@ const editAccountInformation = (id, data) => {
     return instance.put(`${API_URL}/${id}`, data);
 }
 
-const changeAccountPassword = (id, data) => {
-    return instance.put(`${API_URL}/password/${id}`, data);
+const changeAccountPassword = (accountId, data) => {
+    return instance.put(`${API_URL}/${accountId}/change-password`, data);
 }
 
-const checkPasswordById = (id, data) => {
-    return instance.post(`${API_URL}/check-password/${id}`, data);
+const checkPasswordByAccountId = (accountId, data) => {
+    return instance.post(`${API_URL}/${accountId}/check-password`, data);
 }
 
-const checkEmail = (account) => {
-    return instance.post(`${API_URL}/check-email`, account);
+const getAllExchangesByAccountId = (accountId, page = 0, size = 10, data) => {
+    return instance.post(`${API_URL}/${accountId}/exchanges?page=${page}&size=${size}`, data);
 }
 
 
@@ -41,8 +41,8 @@ export {
     getAccountById,
     editAccountInformation,
     changeAccountPassword,
-    checkPasswordById,
-    checkEmail
+    checkPasswordByAccountId,
+    getAllExchangesByAccountId
 };
 
 export const getAccountLogin = createAsyncThunk(

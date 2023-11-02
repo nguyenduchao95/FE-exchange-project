@@ -33,7 +33,7 @@ function Register() {
                                         validationSchema={
                                             Yup.object().shape({
                                                 username: Yup.string().required('Tài khoản không được để trống!')
-                                                    .matches(/^[a-zA-Z0-9]{6,}$/, 'Tài khoản phải có ít nhất 6 kí tự, không chứ kí tự đặc biệt'),
+                                                    .matches(/^[a-zA-Z0-9]{6,}$/, 'Tài khoản phải có ít nhất 6 kí tự, không chứa kí tự đặc biệt'),
                                                 password: Yup.string().required('Mật khẩu không được để trống!')
                                                     .min(6, 'Mật khẩu phải ít nhất 6 kí tự'),
                                                 name: Yup.string().required('Họ tên không được để trống!'),
