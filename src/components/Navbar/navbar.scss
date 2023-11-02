@@ -1,7 +1,42 @@
 .dropdown-toggle::after {
   display: none !important;
 }
+@keyframes flash-animation {
+  0% {
+    background-color: red;
+  }
+  50% {
+    background-color: yellow;
+  }
+  100% {
+    background-color: red;
+  }
+}
+.image-container {
+  width: 100%;
+  height: 325px; /* Chiều cao mong muốn */
+  overflow: hidden;
+}
 
+.cropped-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.flash-button {
+  position: fixed;
+  right: 20px;
+  top: 20%;
+  transform: translateY(-50%);
+  animation: flash-animation 2s infinite;
+  background-color: red;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
 .nav-bar {
   $color-primary: rgb(0, 185, 142);
   background-color: #f1f1f1;
