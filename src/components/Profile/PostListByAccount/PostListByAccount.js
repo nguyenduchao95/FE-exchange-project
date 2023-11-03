@@ -87,7 +87,10 @@ const PostListByAccount = () => {
         });
         setShow(true);
     }
-
+    const validationSchema = Yup.object().shape({
+        title: Yup.string().required('Vui lòng nhập tên sản phẩm'),
+        avatar: Yup.mixed().required('Vui lòng chọn ảnh hiển thị'),
+    });
     const handleAvatarChange = (event, values) => {
         const file = event.target.files[0];
         setAvatar(file);
@@ -235,6 +238,7 @@ const PostListByAccount = () => {
                         address: postEdit ? postEdit.address : '',
                         avatar: postEdit ? postEdit.avatar : '',
                     }}
+                    validationSchema={validationSchema}
                     onSubmit={values => {
                         handleOnSubmit(values);
                     }}
