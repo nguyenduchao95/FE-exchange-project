@@ -3,7 +3,7 @@ import './postDetail.scss';
 import _ from 'lodash';
 import Images from "./Images";
 import {Button, Modal} from "react-bootstrap";
-import {Link, useParams} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import {getAllImagesByPostId} from "../../service/imageService";
 import {getPostById} from "../../service/postService";
 import {Pagination} from "@mui/material";
@@ -35,16 +35,20 @@ const PostDetail = () => {
                 setPost(response.data);
             }).catch(error => console.log(error))
         }
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        })
     }, [])
 
     useEffect(() => {
         if (account.id) {
-        getAllPostsByAccountId(account.id, currentPage - 1, 6)
-            .then(response => {
-                setPosts(response.data.content);
-                setTotalPages(response.data.totalPages);
-            })
-            .catch(error => console.log(error))
+            getAllPostsByAccountId(account.id, currentPage - 1, 6, {})
+                .then(response => {
+                    setPosts(response.data.content);
+                    setTotalPages(response.data.totalPages);
+                })
+                .catch(error => console.log(error))
         }
     }, [currentPage])
 
@@ -178,7 +182,7 @@ const PostDetail = () => {
                                                        style={{marginLeft: '40px'}}>
                                                         {item.title}
                                                     </p>
-                                                    <img className="img-thumbnail" src={item.avatar} alt=""/>
+                                                    <img className="img-thumbnail" src={item.avatar} alt="" style={{aspectRatio: '1/1'}}/>
                                                 </label>
                                                 <Field className="form-check position-absolute top-0"
                                                        type="radio" name="product" id={`product-${item.id}`}

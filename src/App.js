@@ -16,6 +16,9 @@ import AccountInformation from "./components/Profile/AccountInfomation/AccountIn
 import Login from "./components/Login-Register/Login";
 import Register from "./components/Login-Register/Register";
 import CreatePost from "./components/Profile/PostList/CreatePost";
+import ChangePassword from "./components/Profile/ChangePassword/ChangePassword";
+import PostListByAccount from "./components/Profile/PostListByAccount/PostListByAccount";
+import ExchangeHistory from "./components/Profile/ExchangeHistory/ExchangeHistory";
 
 
 function App() {
@@ -34,8 +37,11 @@ function App() {
                 <Route path="/chat" element={<ChatBox/>}/>
                 <Route path={"/account/"} element={<Profile/>}>
                     <Route path="information" element={<AccountInformation/>}/>
-                    <Route path={"manage-posts"} element={<PostList/>}/>
-                    <Route path={"manage-users"} element={<UserList/>}/>
+                    <Route path="change-password" element={<ChangePassword/>}/>
+                    <Route path="exchange-history" element={<ExchangeHistory/>}/>
+                    <Route path="manage-posts-user" element={<PostListByAccount/>}/>
+                    <Route path="manage-posts-admin" element={<PostList/>}/>
+                    <Route path="manage-users" element={<UserList/>}/>
                 </Route>
             </Routes>
             <Footer/>

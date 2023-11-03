@@ -5,18 +5,23 @@ import {Pagination} from "@mui/material";
 import {getAllPosts} from "../../../service/postService";
 import {Link} from "react-router-dom";
 import {formatDate} from "../../../service/format";
+import {getAllPostsByAccountId} from "../../../service/accountService";
+import {useSelector} from "react-redux";
 
-const PostList = () => {
+const PostListByAccount = () => {
     const [posts, setPosts] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
-    const [username, setUsername] = useState("");
     const [title, setTitle] = useState("");
     const [status, setStatus] = useState("");
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
     const [render, setRender] = useState(false);
+    const account = useSelector(state => state.myState.account);
 
     useEffect(() => {
-        getAllPosts(currentPage - 1, 10, status, username, title).then(response => {
+        const data = {status, title, startDate, endDate};
+        getAllPostsByAccountId(account.id, currentPage - 1, 10, data).then(response => {
             setPosts(response.data.content);
             setTotalPages(response.data.totalPages);
         }).catch(error => console.log(error));
@@ -24,11 +29,7 @@ const PostList = () => {
             top: 0,
             behavior: "smooth"
         })
-    }, [currentPage, status, username, title, render])
-
-    useEffect(() => {
-
-    }, [])
+    }, [currentPage, status, title, startDate, endDate, render])
 
     const changePage = (e, value) => {
         setCurrentPage(value);
@@ -39,18 +40,19 @@ const PostList = () => {
         setCurrentPage(1);
     }
 
-    const handleChangeUsername = (event) => {
-        setUsername(event.target.value);
-        setCurrentPage(1);
-    }
-
     const handleChangeTitle = (event) => {
         setTitle(event.target.value);
         setCurrentPage(1);
     }
 
-    const showPostDetail = (post) => {
+    const handleChangeStartDate = (event) => {
+        setStartDate(event.target.value);
+        setCurrentPage(1);
+    }
 
+    const handleChangeEndDate = (event) => {
+        setEndDate(event.target.value);
+        setCurrentPage(1);
     }
 
 
@@ -59,7 +61,7 @@ const PostList = () => {
             <h3 className="text-uppercase text-center mb-5">Danh sách bài đăng</h3>
             <div className="mb-3 py-4 px-3"
                  style={{backgroundColor: "rgb(220,219,219)"}}>
-                <div className={'row g-2'}>
+                <div className='row g-2'>
                     <div className="col-md-4">
                         <label className="form-label fw-medium">Trạng thái</label>
                         <select className="form-select py-2 border-0"
@@ -71,28 +73,36 @@ const PostList = () => {
                     </div>
 
                     <div className="col-md-4">
-                        <label className="form-label fw-medium">Tìm kiếm theo người đăng</label>
-                        <input type="text" className="form-control border-0 py-2"
-                               placeholder="Nhập từ khóa tìm kiếm"
-                               value={username}
-                               onChange={handleChangeUsername}/>
-                    </div>
-
-                    <div className="col-md-4">
                         <label className="form-label fw-medium">Tìm kiếm theo tên bài đăng</label>
                         <input type="text" className="form-control border-0 py-2"
                                placeholder="Nhập từ khóa tìm kiếm"
                                value={title}
                                onChange={handleChangeTitle}/>
                     </div>
+
+                    <div className="col-2">
+                        <div className="text-center mb-2 fw-medium">Ngày bắt đầu</div>
+                        <input type="date" className="form-control border-0 py-2"
+                               onChange={handleChangeStartDate}/>
+                    </div>
+
+                    <div className="col-2">
+                        <div className="text-center mb-2 fw-medium">Ngày kết thúc</div>
+                        <input type="date" className="form-control border-0 py-2"
+                               onChange={handleChangeEndDate}/>
+                    </div>
                 </div>
             </div>
+
+            <button className="btn btn-lg btn-primary mb-3 btn-add-product">
+                Thêm bài đăng
+            </button>
+
             <Table hover>
                 <thead>
                 <tr align="center">
                     <th>STT</th>
                     <th>Tên bài đăng</th>
-                    <th>Người đăng</th>
                     <th>Ngày đăng</th>
                     <th>Trạng thái</th>
                     <th>Hành động</th>
@@ -104,28 +114,26 @@ const PostList = () => {
                         <tr key={item.id} align="center">
                             <td>{index + 1}</td>
                             <td>
-                                <Link to={`/posts/${item.id}`} className="nav-link fw-medium">
+                                <Link to={`/posts/${item.id}`} className="nav-link fw-medium text-start">
+                                    <img className="img-thumbnail me-3" src={item.avatar} alt="" width={80}
+                                    style={{height: 80}}/>
                                     {item.title}
                                 </Link>
                             </td>
-                            <td>{item.account.username}</td>
                             <td>{formatDate(item.createdAt)}</td>
                             <td>{item.status}</td>
-                            <td className="d-flex justify-content-center">
+                            <td>
                                 <button
-                                    onClick={() => {
-                                        showPostDetail(item)
-                                    }}
-                                    className="btn border border-primary text-primary"
-                                    style={{width: '100px'}}>
-                                    Chi tiết
+                                    className="btn border border-danger text-danger"
+                                    style={{minWidth: '100px'}}>
+                                    Sửa bài đăng
                                 </button>
                             </td>
                         </tr>
                     ))
                     :
                     <tr align="center">
-                        <td colSpan="6" className="pt-3 fs-5 text-danger">Danh sách trống</td>
+                        <td colSpan="5" className="pt-3 fs-5 text-danger">Danh sách trống</td>
                     </tr>
                 }
                 </tbody>
@@ -142,4 +150,4 @@ const PostList = () => {
     );
 };
 
-export default PostList;
+export default PostListByAccount;

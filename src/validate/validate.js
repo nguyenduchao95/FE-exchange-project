@@ -1,4 +1,7 @@
 import * as Yup from "yup";
+import {checkPasswordByAccountId} from "../service/accountService";
+
+const account = JSON.parse(localStorage.getItem("account"));
 const exchangeSchema = Yup.object().shape({
     content: Yup.string()
         .required('Vui lòng không được để trống'),
@@ -18,7 +21,36 @@ const editAccountInfoSchema = Yup.object().shape({
         .required('Vui lòng không được để trống'),
 })
 
+const changePasswordSchema = Yup.object().shape({
+    password: Yup.string()
+        .test('incorrect', 'Mật khẩu không đúng', async (value) => {
+            const isExist = await checkPasswordByAccountId(account.id, {password: value});
+            return isExist.data;
+        })
+        .required('Vui lòng không được để trống'),
+    newPassword: Yup.string()
+        .min(6, 'Mật khẩu phải chứa ít nhất 6 kí tự')
+        .matches(
+            /^[^\s!@#$%^&*()_+{}\[\]:;<>,.?~\\/-]+$/,
+            'Mật khẩu không được chứa kí tự đặc biệt'
+        )
+        .matches(
+            /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).+$/,
+            'Mật khẩu phải chứa chữ cái viết hoa, viết thường và ký tự số'
+        )
+        .test('incorrect', 'Mật khẩu mới phải khác với mật khẩu cũ', async (value) => {
+            const isExist = await checkPasswordByAccountId(account.id, {password: value});
+            return !isExist.data;
+        })
+        .required('Vui lòng không được để trống'),
+    confirmNewPassword: Yup.string()
+        .oneOf([Yup.ref('newPassword'), null], 'Mật khẩu không khớp')
+        .required('Vui lòng không được để trống')
+});
+
+
 export {
     exchangeSchema,
-    editAccountInfoSchema
+    editAccountInfoSchema,
+    changePasswordSchema
 };
