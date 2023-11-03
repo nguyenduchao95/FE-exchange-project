@@ -146,12 +146,6 @@ const CreatePost = () => {
                                            hidden={true}
                                            onChange={event => handleImageChange(event, values)}/>
                                     <label className="btn btn-outline-danger" htmlFor="images">Chọn ảnh</label>
-                                    {/*{errorImages !== '' && <div className="text-danger">{errorImages}</div>}*/}
-                                    {/*{!_.isEmpty(imagesFile) && imagesURLEdit.map((item, index) => (*/}
-                                    {/*    <ImageItemEdit key={item.id} index={index} url={item.url}*/}
-                                    {/*                   setImageURLEdit={setImagesURLEdit} values={values}*/}
-                                    {/*                   imagesFile={imagesFile} setImagesURLDelete={setImagesURLDelete}/>*/}
-                                    {/*))}*/}
                                     <div>
                                         {!_.isEmpty(imagesFile) && imagesFile.map(file => (
                                             <ImageItem file={file} setImagesFile={setImagesFile}

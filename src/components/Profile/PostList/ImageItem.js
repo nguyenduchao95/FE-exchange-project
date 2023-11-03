@@ -17,7 +17,11 @@ const ImageItem = ({file, setImagesFile, setImagesURL, imagesFile, values, house
             }
             setImagesURL(pre => [...pre, imgObject]);
         }
-        uploadImages().then();
+        uploadImages().then(()=>{
+            console.log(imagePreview)
+        }).catch(err=>{
+            console.log(err)
+        });
     }, [])
 
     const handleDeleteImage = () => {
@@ -45,9 +49,6 @@ const ImageItem = ({file, setImagesFile, setImagesURL, imagesFile, values, house
                       onClick={handleDeleteImage}>
                       <i className="fa-solid fa-trash-can"></i>
                 </span>
-            }
-            {progress < 100 &&
-                <CircularProgressWithLabel value={progress}/>
             }
         </div>
     );

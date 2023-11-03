@@ -16,7 +16,11 @@ const PostUpload = ({file, setAvatarFile, avatarURL, setAvatarURL, values}) => {
             const imageUrl = await uploadFileWithProgress(file, setProgress);
             setAvatarURL(imageUrl);
         }
-        uploadImages().then();
+        uploadImages().then(()=>{
+            console.log(imagePreview)
+        }).catch(err=>{
+            console.log(err)
+        });
 
         return () => {
             if (url) URL.revokeObjectURL(url);
