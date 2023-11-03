@@ -41,12 +41,12 @@ const PostUpload = ({file, setAvatarFile, avatarURL, setAvatarURL, values}) => {
         <div className={`position-relative d-inline-block avatar-upload ${imagePreview ? '' : 'd-none'}`}>
             <img src={imagePreview} className={`img-thumbnail ${progress < 100 ? 'brightness-50' : ''}`} alt=""
                  width={150} loading="lazy"/>
-            {progress >= 100 &&
-                <span className="position-absolute top-0 p-2 fs-5 btn-delete"
-                      onClick={handleDeleteAvatar}>
-                      <i className="bi bi-trash-fill"></i>
-                </span>
-            }
+            {/*{progress >= 100 &&*/}
+            {/*    <span className="position-absolute top-0 p-2 fs-5 btn-delete"*/}
+            {/*          onClick={handleDeleteAvatar}>*/}
+            {/*          <i className="bi bi-trash-fill"></i>*/}
+            {/*    </span>*/}
+            {/*}*/}
             {progress < 100 &&
                 <CircularProgressWithLabel value={progress}/>
             }

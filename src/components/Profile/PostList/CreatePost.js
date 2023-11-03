@@ -20,15 +20,16 @@ const CreatePost = () => {
     const [imagesURL, setImagesURL] = useState([])
     const [imagesURLEdit, setImagesURLEdit] = useState([]);
     const [imagesURLDelete, setImagesURLDelete] = useState([]);
+    const [isImageUploaded, setIsImageUploaded] = useState(false);
 
 
     const avatarRef = useRef(null);
     const imagesRef = useRef(null);
-    const [errorImages, setErrorImages] = useState("");
     const handleAvatarChange = (event, values) => {
         const file = event.target.files[0];
         setAvatar(file);
         values.avatar = file.name;
+        setIsImageUploaded(true);
     };
     const validationSchema = Yup.object().shape({
         title: Yup.string().required('Vui lòng nhập tên sản phẩm'),
@@ -41,8 +42,6 @@ const CreatePost = () => {
     };
 
     const handleOnSubmit = (values) => {
-
-        if (imagesFile.length > 0 && imagesFile.length < 4) {
             let postDTO = {
                 title: values.title,
                 category: values.category,
@@ -74,7 +73,6 @@ const CreatePost = () => {
                     })
                 }
             )
-        }
     }
     return (
         <>
@@ -166,7 +164,8 @@ const CreatePost = () => {
                                 <div className="col-md-3"></div>
                                 <div className="my-3 col-md-5">
                                     <button type="submit" className="btn btn-lg btn-primary me-3"
-                                            style={{minWidth: '120px'}}>
+                                            style={{minWidth: '120px'}}
+                                            disabled={!isImageUploaded} >
                                         Thêm bài post
                                     </button>
                                     <Link to="/" className="btn btn-lg btn-secondary"
