@@ -15,7 +15,7 @@ import ChatBox from "./components/ChatBox/ChatBox";
 import AccountInformation from "./components/Profile/AccountInfomation/AccountInformation";
 import Login from "./components/Login-Register/Login";
 import Register from "./components/Login-Register/Register";
-import CreatePost from "./components/CreatePost";
+import CreatePost from "./components/Profile/PostList/CreatePost";
 
 
 function App() {

@@ -14,6 +14,7 @@ const Navbar = () => {
     const handleLogout = () => {
         dispatch(removeAccount());
         localStorage.removeItem('account');
+        localStorage.removeItem('token');
     }
 
     return (
@@ -118,9 +119,7 @@ const Navbar = () => {
                     </div>
                 </nav>
             </div>
-            <div className="image-container">
-                <img className="cropped-image" src="/banner.jpg"/>
-            </div>
+
 
         </>
     );

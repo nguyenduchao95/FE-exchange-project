@@ -35,6 +35,9 @@ const HomePage = () => {
                     <button onClick={handleClick} className="flash-button">Đăng sản phẩm</button>
                 </div>
             )}
+            <div className="image-container">
+                <img className="cropped-image" src="/banner.jpg"/>
+            </div>
             <div className="container-home">
 
                 <div className="container">
