@@ -12,7 +12,7 @@ const HomePage = () => {
     }
 
     useEffect(() => {
-        getAllPosts(currentPage - 1).then(response => {
+        getAllPosts(currentPage - 1, 12, 'Chưa trao đổi').then(response => {
             setPosts(response.data.content);
             setTotalPages(response.data.totalPages);
         }).catch(error => console.log(error))

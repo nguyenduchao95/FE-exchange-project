@@ -67,8 +67,9 @@ const PostListByAccount = () => {
                         <select className="form-select py-2 border-0"
                                 onChange={handleChangeStatus}>
                             <option value="">Tất cả</option>
-                            <option value="Đang hoạt động">Đang hoạt động</option>
-                            <option value="Bị khóa">Bị khóa</option>
+                            <option value="Chưa trao đổi">Chưa trao đổi</option>
+                            <option value="Chờ trao đổi">Chờ trao đổi</option>
+                            <option value="Đã trao đổi">Đã trao đổi</option>
                         </select>
                     </div>
 

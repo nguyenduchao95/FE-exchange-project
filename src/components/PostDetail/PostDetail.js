@@ -3,7 +3,7 @@ import './postDetail.scss';
 import _ from 'lodash';
 import Images from "./Images";
 import {Button, Modal} from "react-bootstrap";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {getAllImagesByPostId} from "../../service/imageService";
 import {getPostById} from "../../service/postService";
 import {Pagination} from "@mui/material";
@@ -24,6 +24,7 @@ const PostDetail = () => {
     const [product, setProduct] = useState({});
     const {postId} = useParams();
     const account = useSelector(state => state.myState.account);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (postId) {
@@ -43,7 +44,7 @@ const PostDetail = () => {
 
     useEffect(() => {
         if (account.id) {
-            getAllPostsByAccountId(account.id, currentPage - 1, 6, {})
+            getAllPostsByAccountId(account.id, currentPage - 1, 6, {status: "Chưa trao đổi"})
                 .then(response => {
                     setPosts(response.data.content);
                     setTotalPages(response.data.totalPages);
@@ -56,7 +57,29 @@ const PostDetail = () => {
         setCurrentPage(value);
     }
 
-    const handleShowModal = () => {
+    const handleShowModal = (post) => {
+        if (!account.id){
+            Swal.fire({
+                title: 'Vui lòng đăng nhập để trao đổi!',
+                icon: 'error',
+                showConfirmButton: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    navigate('/login');
+                }
+            })
+            return;
+        }
+
+        if (post.account.id === account.id){
+            Swal.fire({
+                title: 'Bạn là chủ của bài đăng này !',
+                text: 'Vui lòng chọn bài đăng khác để trao đổi !',
+                icon: 'error',
+                showConfirmButton: true
+            }).then();
+            return;
+        }
         setShowModal(true);
         setProduct({});
     }
@@ -123,7 +146,7 @@ const PostDetail = () => {
                     </p>
 
                     <button className="btn btn-primary btn-lg"
-                            onClick={handleShowModal}>
+                            onClick={() => handleShowModal(post)}>
                         Trao đổi
                     </button>
                 </div>
