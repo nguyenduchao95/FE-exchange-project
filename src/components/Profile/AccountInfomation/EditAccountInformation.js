@@ -1,6 +1,5 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {ErrorMessage, Field, Form, Formik} from "formik";
-import _ from "lodash";
 import {editAccountInfoSchema} from "../../../validate/validate";
 import AvatarUpload from "./Avatar/AvatarUpload";
 import {editAccountInformation} from "../../../service/accountService";
@@ -65,7 +64,7 @@ const EditAccountInformation = ({accountInfo}) => {
     return (
         <>
             <div className="mt-3 text-center">
-                <button className="btn btn-primary" onClick={handleShowModal}>
+                <button className="btn btn-lg btn-primary" onClick={handleShowModal}>
                     Sửa thông tin
                 </button>
             </div>

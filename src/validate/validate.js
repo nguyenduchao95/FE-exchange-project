@@ -48,9 +48,27 @@ const changePasswordSchema = Yup.object().shape({
         .required('Vui lòng không được để trống')
 });
 
+const savePostSchema = Yup.object().shape({
+    title: Yup.string()
+        .required('Vui lòng không được để trống'),
+    category: Yup.string()
+        .required('Vui lòng không được để trống'),
+    address: Yup.string()
+        .required('Vui lòng không được để trống'),
+    description: Yup.string()
+        .required('Vui lòng không được để trống'),
+    requirement: Yup.string()
+        .required('Vui lòng không được để trống'),
+    avatar: Yup.string()
+        .required('Vui lòng không được để trống'),
+    images: Yup.string()
+        .required('Vui lòng không được để trống')
+})
+
 
 export {
     exchangeSchema,
     editAccountInfoSchema,
-    changePasswordSchema
+    changePasswordSchema,
+    savePostSchema
 };

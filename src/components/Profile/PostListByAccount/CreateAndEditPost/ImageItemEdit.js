@@ -15,7 +15,7 @@ const ImageItemEdit = ({setImageURLEdit, index, url, imagesFile, values, setImag
     return (
         <div className="position-relative d-inline-block image-thumbnail">
             <img src={url} className="img-thumbnail" alt=""
-                 width={150}  loading="lazy"/>
+                 width={250} style={{height: '150px'}} loading="lazy"/>
             <span className="position-absolute top-0 p-2 fs-5 btn-delete"
                   onClick={handleDeleteImage}>
                   <i className="fa-solid fa-trash-can"></i>

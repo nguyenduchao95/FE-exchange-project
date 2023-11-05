@@ -47,12 +47,12 @@ const Navbar = () => {
                                         <ul className="dropdown-menu">
                                             <li className="p-1">
                                                 <Link to="/account/information" className="dropdown-item nav-link">
-                                                    <i className="bi bi-person-bounding-box me-2"></i>Trang cá nhân
+                                                    <i className="fa-solid fa-address-card me-2"></i>Trang cá nhân
                                                 </Link>
                                             </li>
                                             <li className="p-1">
                                                 <Link to="/" className="dropdown-item nav-link" onClick={handleLogout}>
-                                                    <i className="bi bi-power me-2"></i>Đăng xuất
+                                                    <i className="fa-solid fa-power-off me-2"></i>Đăng xuất
                                                 </Link>
                                             </li>
                                         </ul>

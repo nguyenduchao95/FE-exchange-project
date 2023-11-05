@@ -4,7 +4,6 @@ import {Pagination} from "@mui/material";
 import {Link} from "react-router-dom";
 
 const Post = ({posts, totalPages, changePage}) => {
-
     return (
         <div className="container">
             <div className="row g-4">
@@ -19,12 +18,17 @@ const Post = ({posts, totalPages, changePage}) => {
                                                 <img height={273} width={406} src={post.avatar} alt=""/>
                                             </div>
                                         </div>
-                                        <div className="p-4 pb-0">
+                                        <div className="pt-4 px-3">
                                             <h5 className="mb-2 text-center text-truncate">{post.title}</h5>
-                                            <p className="text-truncate">
-                                                <i className="fa fa-map-marker-alt me-2 color-primary"></i>
-                                                {post.address}
-                                            </p>
+                                            <div className="d-flex justify-content-between">
+                                                <p className="text-truncate">
+                                                    <i className="fa fa-map-marker-alt me-2 color-primary"></i>
+                                                    {post.address}
+                                                </p>
+                                                <p className="d-flex align-items-center">
+                                                    <i className="fa-regular fa-eye me-2"></i> {post.countView}
+                                                </p>
+                                            </div>
                                         </div>
                                     </Link>
                                 </div>

@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import _ from "lodash";
 import {Pagination} from "@mui/material";
 import {formatDate} from "../../../service/format";
@@ -10,10 +10,9 @@ import DatePicker, {registerLocale} from "react-datepicker";
 import Swal from "sweetalert2";
 import vi from "date-fns/locale/vi";
 import "react-datepicker/dist/react-datepicker.css";
-import {ErrorMessage, Field, Form, Formik} from "formik";
-import {exchangeConfirmSchema} from "../../../validate/validate";
 import {format} from "date-fns";
-import {denyExchange} from "../../../service/exchangeService";
+import {confirmExchange, denyExchange} from "../../../service/exchangeService";
+import {Link} from "react-router-dom";
 
 registerLocale("vi", vi);
 const ExchangeHistory = () => {
@@ -48,7 +47,7 @@ const ExchangeHistory = () => {
     }, [status, postSell, postBuy, startDate, endDate, currentPage, account, render])
 
     useEffect(() => {
-        if (exchange.id && exchange.status === "Đã xác nhận") {
+        if (exchange.id) {
             getScheduleByExchangeId(exchange.id).then(response => {
                 setSchedule(response.data);
             }).catch(error => console.log(error))
@@ -109,7 +108,7 @@ const ExchangeHistory = () => {
     }
 
     const handleConfirm = () => {
-        if (!exchangeDate || !address){
+        if (!exchangeDate || !address) {
             if (!exchangeDate) setExchangeError("Vui lòng không được để trống");
             if (!address) setAddressError("Vui lòng không được để trống");
             return;
@@ -119,7 +118,7 @@ const ExchangeHistory = () => {
             address,
             exchange: {id: exchange.id}
         }
-        createSchedule(data).then(response=>{
+        createSchedule(data).then(response => {
             Swal.fire({
                 title: 'Xác nhận lịch trao đổi thành công !',
                 icon: 'success',
@@ -148,7 +147,7 @@ const ExchangeHistory = () => {
             cancelButtonText: 'Đóng',
         }).then((result) => {
             if (result.isConfirmed) {
-                denyExchange(item).then(response=>{
+                denyExchange(item).then(response => {
                     Swal.fire({
                         title: 'Từ chối thành công !',
                         icon: 'success',
@@ -169,6 +168,85 @@ const ExchangeHistory = () => {
         })
     }
 
+    const handleSuccess = (item) => {
+        Swal.fire({
+            title: `Xác nhận giao dịch thành công ?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Xác nhận',
+            cancelButtonText: 'Đóng',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                confirmExchange(item).then(response => {
+                    Swal.fire({
+                        title: 'Xác nhận thành công !',
+                        icon: 'success',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then();
+                    setRender(!render);
+                }).catch(error => {
+                    console.log(error);
+                    Swal.fire({
+                        title: 'Xác nhận thất bại !',
+                        icon: 'error',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then();
+                })
+            }
+        })
+    }
+
+    const handleFail = (item) => {
+        Swal.fire({
+            title: `Xác nhận giao dịch thất bại ?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Xác nhận',
+            cancelButtonText: 'Đóng',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Nhập lý do giao dịch thất bại',
+                    input: 'text',
+                    inputAttributes: {
+                        autocapitalize: 'off'
+                    },
+                    showCancelButton: true,
+                    cancelButtonText: 'Đóng',
+                    confirmButtonText: 'Gửi',
+                    preConfirm: (value) => {
+                        if (!value) {
+                            Swal.showValidationMessage('Vui lòng không để trống')
+                        }
+                    }
+                }).then((rs) => {
+                    if (rs.isConfirmed) {
+                        item.reason = rs.value;
+                        denyExchange(item).then(response => {
+                            Swal.fire({
+                                title: 'Xác nhận thành công !',
+                                icon: 'success',
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then();
+                            setRender(!render);
+                        }).catch(error => {
+                            console.log(error);
+                            Swal.fire({
+                                title: 'Xác nhận thất bại !',
+                                icon: 'error',
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then();
+                        })
+                    }
+                })
+            }
+        })
+    }
+
     return (
         <div className="col-12 col-lg-9">
             <div className="container" style={{minHeight: '600px'}}>
@@ -181,7 +259,8 @@ const ExchangeHistory = () => {
                                 onChange={handleChangeStatus}>
                             <option value="">Tất cả</option>
                             <option value="Chờ xác nhận">Chờ xác nhận</option>
-                            <option value="Đã xác nhận">Đã xác nhận</option>
+                            <option value="Chờ trao đổi">Chờ trao đổi</option>
+                            <option value="Đã trao đổi">Đã trao đổi</option>
                             <option value="Đã hủy">Đã hủy</option>
                         </select>
                     </div>
@@ -230,9 +309,17 @@ const ExchangeHistory = () => {
                                     <td>
                                         <h6 className="m-0">{index + 1}</h6>
                                     </td>
-                                    <td>{item.postSell.title}</td>
+                                    <td>
+                                        <Link to={`/posts/${item.postSell.id}`} className="nav-link">
+                                            {item.postSell.title}
+                                        </Link>
+                                    </td>
                                     <td>{formatDate(item.createdAt)}</td>
-                                    <td>{item.postBuy.title}</td>
+                                    <td>
+                                        <Link to={`/posts/${item.postBuy.id}`} className="nav-link">
+                                            {item.postBuy.title}
+                                        </Link>
+                                    </td>
                                     <td>{item.status}</td>
                                     <td>
                                         {item.postSell.account.id === account.id && item.status === 'Chờ xác nhận' ?
@@ -247,7 +334,19 @@ const ExchangeHistory = () => {
                                                 </button>
                                             </>
                                             :
-                                            null
+                                            item.postSell.account.id === account.id && item.status === 'Chờ trao đổi' ?
+                                                <>
+                                                    <button className="btn border-success text-success me-2"
+                                                            onClick={() => handleSuccess(item)}>
+                                                        Thành công
+                                                    </button>
+                                                    <button className="btn border-danger text-danger me-2"
+                                                            onClick={() => handleFail(item)}>
+                                                        Thất bại
+                                                    </button>
+                                                </>
+                                                :
+                                                null
                                         }
                                         <button className="btn border-primary text-primary"
                                                 onClick={() => handleExchangeDetail(item)}>
@@ -302,6 +401,9 @@ const ExchangeHistory = () => {
                                             <span
                                                 className="fw-medium">Người đăng: </span>{exchange.postSell.account.username}
                                         </p>
+                                        <p className="mb-1">
+                                            <span className="fw-medium">Trạng thái: </span>{exchange.postSell.status}
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -321,6 +423,9 @@ const ExchangeHistory = () => {
                                             <span
                                                 className="fw-medium">Người đăng: </span>{exchange.postBuy.account.username}
                                         </p>
+                                        <p className="mb-1">
+                                            <span className="fw-medium">Trạng thái: </span>{exchange.postBuy.status}
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -333,15 +438,21 @@ const ExchangeHistory = () => {
                                     <span className="fw-medium">Nội dung trao đổi: </span>{exchange.content}
                                 </p>
                                 <p className="mb-1">
-                                    <span className="fw-medium">Trạng thái: </span>{exchange.status}
+                                    <span className="fw-medium">Trạng thái trao đổi: </span>{exchange.status}
                                 </p>
+                                {exchange.status === 'Đã hủy' && exchange.reason &&
+                                    <p className="mb-1">
+                                        <span className="fw-medium">Lý do: </span>{exchange.reason}
+                                    </p>
+                                }
                                 {!_.isEmpty(schedule) &&
                                     <>
                                         <p className="mb-1">
                                             <span className="fw-medium">Địa chỉ giao dịch: </span>{schedule.address}
                                         </p>
                                         <p className="mb-1">
-                                            <span className="fw-medium">Ngày giao dịch: </span>{formatDate(schedule.date)}
+                                            <span
+                                                className="fw-medium">Ngày giao dịch: </span>{formatDate(schedule.date)}
                                         </p>
                                     </>
                                 }

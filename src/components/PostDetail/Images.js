@@ -39,8 +39,8 @@ const Images = ({images}) => {
                 modules={[FreeMode, Navigation, Thumbs]}
                 className="mySwiper"
             >
-                {images.map(image =>
-                    <SwiperSlide key={image.id}>
+                {images.map((image, index) =>
+                    <SwiperSlide key={index}>
                         <img src={image.url} alt=""/>
                     </SwiperSlide>
                 )}

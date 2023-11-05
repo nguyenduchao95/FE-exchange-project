@@ -33,6 +33,18 @@ const getAllExchangesByAccountId = (accountId, page = 0, size = 10, data) => {
     return instance.post(`${API_URL}/${accountId}/exchanges?page=${page}&size=${size}`, data);
 }
 
+const getPostPinByAccountSellAndAccountBuy = (accountSell, accountBuy) => {
+    return instance.get(`${API_URL}/${accountSell}/${accountBuy}/post-pin`);
+}
+
+const createPost = (data) =>{
+    return instance.post(`${API_URL}/posts`, data);
+}
+
+const editPost = (data) =>{
+    return instance.put(`${API_URL}/posts/${data.id}`, data);
+}
+
 
 export {
     getAllPostsByAccountId,
@@ -42,7 +54,10 @@ export {
     editAccountInformation,
     changeAccountPassword,
     checkPasswordByAccountId,
-    getAllExchangesByAccountId
+    getAllExchangesByAccountId,
+    getPostPinByAccountSellAndAccountBuy,
+    createPost,
+    editPost
 };
 
 export const getAccountLogin = createAsyncThunk(

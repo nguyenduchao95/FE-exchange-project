@@ -6,16 +6,11 @@
     background-color: red;
   }
   50% {
-    background-color: yellow;
+    background-color: #03c177;
   }
   100% {
     background-color: red;
   }
-}
-.image-container {
-  width: 100%;
-  height: 325px; /* Chiều cao mong muốn */
-  overflow: hidden;
 }
 
 .cropped-image {
@@ -26,6 +21,7 @@
 
 .flash-button {
   position: fixed;
+  z-index: 100;
   right: 20px;
   top: 20%;
   transform: translateY(-50%);

@@ -1,7 +1,6 @@
-import React, {createContext, useEffect, useState} from 'react';
+import React, {createContext, useState} from 'react';
 import Stomp from "stompjs";
 import {useDispatch, useSelector} from "react-redux";
-import {toast} from "react-toastify";
 import _ from "lodash";
 import {useNavigate} from "react-router-dom";
 import {countUnreadMessagesByReceiverId} from "../../service/messageService";
@@ -10,7 +9,6 @@ import {countUnreadMessage} from "../../redux/reducer/accountSlice";
 
 export const WebSocketContext = createContext(null)
 const WebSocketProvider = ({children}) => {
-    const [notify, setNotify] = useState({});
     const [messageReceiver, setMessageReceiver] = useState({});
     const account = useSelector(state => state.myState.account);
     const dispatch = useDispatch();
@@ -18,16 +16,6 @@ const WebSocketProvider = ({children}) => {
     let socket;
     let stompClient;
     let ws;
-
-    useEffect(() => {
-        if (!_.isEmpty(notify))
-            toast.success(`Bạn có 1 thông báo mới từ ${notify?.sender?.username}`, {position: "bottom-right"});
-    }, [notify])
-
-    useEffect(() => {
-        if (!_.isEmpty(messageReceiver))
-            toast.success(`Bạn có 1 tin nhắn mới từ ${messageReceiver?.sender?.username}`, {position: "bottom-right"});
-    }, [messageReceiver])
 
     const sendNotify = (notify) => {
         if (!stompClient) return;
@@ -78,7 +66,7 @@ const WebSocketProvider = ({children}) => {
     ws = {
         sendNotify,
         sendMessage,
-        setMessageReceiver
+        messageReceiver
     }
 
     return (

@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import CircularProgressWithLabel from "./CircularProgressWithLabel";
-import uploadFileWithProgress from "../../../firebase/uploadFileWithProgress";
+import uploadFileWithProgress from "../../../../firebase/uploadFileWithProgress";
+import CircularProgressWithLabel from "../../AccountInfomation/Avatar/CircularProgressWithLabel";
 
-const ImageItem = ({file, setImagesFile, setImagesURL, imagesFile, values, houseId}) => {
+const ImageItem = ({file, setImagesFile, setImagesURL, imagesFile, values, postId}) => {
     const [imagePreview, setImagePreview] = useState("");
     const [progress, setProgress] = useState(0);
 
@@ -13,15 +13,11 @@ const ImageItem = ({file, setImagesFile, setImagesURL, imagesFile, values, house
             const imageUrl = await uploadFileWithProgress(file, setProgress);
             const imgObject = {
                 url: imageUrl,
-                house: {id: houseId}
+                post: {id: postId}
             }
             setImagesURL(pre => [...pre, imgObject]);
         }
-        uploadImages().then(()=>{
-            console.log(imagePreview)
-        }).catch(err=>{
-            console.log(err)
-        });
+        uploadImages().then();
     }, [])
 
     const handleDeleteImage = () => {
@@ -43,12 +39,15 @@ const ImageItem = ({file, setImagesFile, setImagesURL, imagesFile, values, house
     return (
         <div className={`position-relative d-inline-block image-thumbnail ${imagePreview ? '' : 'd-none'}`}>
             <img src={imagePreview} className={`img-thumbnail ${progress < 100 ? 'brightness-50' : ''}`} alt=""
-                 width={150} loading="lazy"/>
+                 width={250} style={{height: '150px'}} loading="lazy"/>
             {progress >= 100 &&
                 <span className="position-absolute top-0 p-2 fs-5 btn-delete"
                       onClick={handleDeleteImage}>
                       <i className="fa-solid fa-trash-can"></i>
                 </span>
+            }
+            {progress < 100 &&
+                <CircularProgressWithLabel value={progress}/>
             }
         </div>
     );

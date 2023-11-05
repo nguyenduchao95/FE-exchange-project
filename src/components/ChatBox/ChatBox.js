@@ -9,7 +9,11 @@ import {
 import {formatDateTimeMessage} from "../../service/format";
 import image_default from '../../image/user-image.png';
 import {WebSocketContext} from "../WebSocket/WebSocketProvider";
-import {listUserAndUnreadMessage, searchUsersMessage} from "../../service/accountService";
+import {
+    getPostPinByAccountSellAndAccountBuy,
+    listUserAndUnreadMessage,
+    searchUsersMessage
+} from "../../service/accountService";
 import {useNavigate} from "react-router-dom";
 import {countUnreadMessage} from "../../redux/reducer/accountSlice";
 
@@ -20,6 +24,7 @@ const ChatBox = () => {
         const [search, setSearch] = useState("");
         const [usersSearch, setUsersSearch] = useState([]);
         const [selectedAccount, setSelectedAccount] = useState({});
+        const [postPin, setPostPin] = useState({});
         const [render, setRender] = useState(true);
         const chatRef = useRef(null);
         const dispatch = useDispatch();
@@ -62,6 +67,14 @@ const ChatBox = () => {
                 getAllMessagesBySenderIdAndReceiverId(account.id, selectedAccount.id)
                     .then(response => {
                         setMessages(response.data);
+                    }).catch(error => {
+                    console.log(error);
+                })
+
+                getPostPinByAccountSellAndAccountBuy(account.id, selectedAccount.id)
+                    .then(response => {
+                        setPostPin(response.data);
+                        console.log(response.data)
                     }).catch(error => {
                     console.log(error);
                 })
@@ -139,7 +152,7 @@ const ChatBox = () => {
                                                     style={{cursor: 'pointer'}}
                                                     onClick={() => setSelectedAccount(item)}>
                                                     <img src={item.avatar ? item.avatar : image_default} alt="avatar"
-                                                         width={30} style={{height : '30px'}}/>
+                                                         width={30} style={{height: '30px'}}/>
                                                     <div className="ms-2">{item.username}</div>
                                                 </li>
                                             ))
@@ -154,7 +167,7 @@ const ChatBox = () => {
                                             key={user.account.id}
                                             onClick={() => handleSelectedAccount(user.account)}>
                                             <img src={user.account.avatar ? user.account.avatar : image_default}
-                                                 alt="avatar" style={{height : '40px' , width : '40px'}}/>
+                                                 alt="avatar" style={{height: '40px', width: '40px'}}/>
                                             <div className="about">
                                                 <div className="name">{user.account.username}</div>
                                             </div>
@@ -172,24 +185,30 @@ const ChatBox = () => {
                             <div className="chat">
                                 {!_.isEmpty(selectedAccount) ?
                                     <>
-                                        <div className="chat-header clearfix">
+                                        <div className="chat-header clearfix position-relative">
                                             <div className="row">
                                                 <div className="col-lg-6">
                                                     <span>
                                                         <img
                                                             src={selectedAccount.avatar ? selectedAccount.avatar : image_default}
-                                                            alt="avatar" style={{width : '50px' , height : '50px'}}/>
+                                                            alt="avatar" style={{width: '50px', height: '50px'}}/>
                                                     </span>
                                                     <div className="chat-about">
                                                         <h6 className="m-b-0">{selectedAccount.username}</h6>
-                                                        {/*<small>Last seen: 2 hours ago</small>*/}
                                                     </div>
                                                 </div>
                                             </div>
+                                            {!_.isEmpty(postPin) &&
+                                                <div className="bg-light position-absolute start-0 end-0 top-100" style={{zIndex: '10'}}>
+                                                    <img src={postPin.exchange.postSell?.avatar} className="img-thumbnail" alt=""
+                                                         style={{aspectRatio: '1/1', width: '80px'}} />
+                                                    <span className="ms-2">{postPin.exchange.postSell?.title}</span>
+                                                </div>
+                                            }
                                         </div>
                                         <div className="chat-history" style={{height: '500px', overflowY: 'auto'}}
                                              ref={chatRef}>
-                                            <ul className="m-b-0">
+                                            <ul className="mb-0">
                                                 {!_.isEmpty(messages) && messages.map(item => {
                                                     if (item.sender.id !== account.id)
                                                         return (
@@ -200,7 +219,8 @@ const ChatBox = () => {
                                                         </span>
                                                                     <img
                                                                         src={item.sender.avatar ? item.sender.avatar : image_default}
-                                                                        alt="avatar" style={{width : '40px' , height : '40px'}}/>
+                                                                        alt="avatar"
+                                                                        style={{width: '40px', height: '40px'}}/>
                                                                 </div>
                                                                 <div className="message other-message float-right">
                                                                     {item.content}
@@ -240,8 +260,8 @@ const ChatBox = () => {
                                     </>
                                     :
                                     <div className="chat-history text-center fs-5" style={{height: '500px'}}>
-                                        <p className="fs-4 fw-medium">Chào mừng đến với LUXURY</p>
-                                        <p>Đặt phòng nhà, homestay trực tuyến giá rẻ</p>
+                                        <p className="fs-4 fw-medium">Chào mừng đến với EXCHANGE</p>
+                                        <p>Trao đổi sản phẩm nhanh, uy tín</p>
                                     </div>
                                 }
                             </div>
