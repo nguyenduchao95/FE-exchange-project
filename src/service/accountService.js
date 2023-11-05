@@ -37,6 +37,14 @@ const getPostPinByAccountSellAndAccountBuy = (accountSell, accountBuy) => {
     return instance.get(`${API_URL}/${accountSell}/${accountBuy}/post-pin`);
 }
 
+const createPost = (data) =>{
+    return instance.post(`${API_URL}/posts`, data);
+}
+
+const editPost = (data) =>{
+    return instance.put(`${API_URL}/posts/${data.id}`, data);
+}
+
 
 export {
     getAllPostsByAccountId,
@@ -47,7 +55,9 @@ export {
     changeAccountPassword,
     checkPasswordByAccountId,
     getAllExchangesByAccountId,
-    getPostPinByAccountSellAndAccountBuy
+    getPostPinByAccountSellAndAccountBuy,
+    createPost,
+    editPost
 };
 
 export const getAccountLogin = createAsyncThunk(

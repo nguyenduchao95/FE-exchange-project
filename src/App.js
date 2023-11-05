@@ -7,7 +7,6 @@ import Footer from "./components/Footer/Footer";
 import HomePage from "./components/HomePage/HomePage";
 import Component404 from "./components/404/Component404";
 import Component403 from "./components/403/Component403";
-import PostDetail from "./components/PostDetail/PostDetail";
 import Profile from "./components/Profile/Profile";
 import UserList from "./components/Profile/UserList/UserList";
 import PostList from "./components/Profile/PostList/PostList";
@@ -18,6 +17,8 @@ import Register from "./components/Login-Register/Register";
 import ChangePassword from "./components/Profile/ChangePassword/ChangePassword";
 import PostListByAccount from "./components/Profile/PostListByAccount/PostListByAccount";
 import ExchangeHistory from "./components/Profile/ExchangeHistory/ExchangeHistory";
+import SavePost from "./components/Profile/PostListByAccount/CreateAndEditPost/SavePost";
+import PostDetail from "./components/PostDetail/PostDetail";
 
 
 function App() {
@@ -28,11 +29,13 @@ function App() {
                 <Route path={"/"} element={<HomePage/>}/>
                 <Route path={"/login"} element={<Login/>}/>
                 <Route path={"/register"} element={<Register/>}/>
-                <Route path={"/posts/:postId"} element={<PostDetail/>}/>
                 <Route path={'*'} element={<Navigate to="/404" replace />}/>
                 <Route path="/404" element={<Component404/>}></Route>
                 <Route path={'/403'} element={<Component403/>}></Route>
                 <Route path="/chat" element={<ChatBox/>}/>
+                <Route path="/create-post" element={<SavePost/>}/>
+                <Route path="/edit-post/:postId" element={<SavePost/>}/>
+                <Route path="/posts/:postId" element={<PostDetail/>}/>
                 <Route path={"/account/"} element={<Profile/>}>
                     <Route path="information" element={<AccountInformation/>}/>
                     <Route path="change-password" element={<ChangePassword/>}/>

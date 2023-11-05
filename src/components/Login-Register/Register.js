@@ -40,7 +40,8 @@ function Register() {
                                                 confirmPassword: Yup.string()
                                                     .required('Mật khẩu không được để trống!')
                                                     .oneOf([Yup.ref('password')], 'Xác nhận mật khẩu không khớp'),
-                                                address: Yup.string().required('Địa chỉ không được để trống!'),
+                                                address: Yup.string().matches(/^(((\+|)84)|0)(3|5|7|8|9)+([0-9]{8})\b$/, 'Đây không phải là số điện thoại')
+                                                    .required('Vui lòng không được để trống'),
                                                 phone: Yup.string().required('Số điện thoại không được để trống!')
                                                     .matches(/^\d{10}$/, 'Số điện thoại là dãy 10 chữ số'),
                                             })

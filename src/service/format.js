@@ -1,9 +1,5 @@
 import {format} from "date-fns";
 
-const formatCurrency = (price) => {
-  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
-}
-
 const formatDate = (date) => {
   return format(new Date(date), "dd/MM/yyyy");
 }
@@ -25,4 +21,4 @@ const formatDateTimeMessage = (dateString) => {
   return `${hours}:${minutes}, ${dates}/${months}/${years}`;
 }
 
-export {formatCurrency, formatDate, formatDateTimeMessage};
+export {formatDate, formatDateTimeMessage};

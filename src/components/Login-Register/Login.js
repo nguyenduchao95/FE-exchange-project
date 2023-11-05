@@ -47,6 +47,7 @@ function Login() {
                                             axios.post("http://localhost:8080/login", account).then(resp => {
                                                 dispatch(getAccountLogin(resp.data))
                                                 localStorage.setItem('account', JSON.stringify(resp.data));
+                                                localStorage.setItem('token', 'Bearer ' + resp.data.token);
                                                 Swal.fire({
                                                     title: 'Đăng nhập thành công !',
                                                     icon: 'success',

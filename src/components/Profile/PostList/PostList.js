@@ -68,6 +68,7 @@ const PostList = () => {
                             <option value="Chưa trao đổi">Chưa trao đổi</option>
                             <option value="Chờ trao đổi">Chờ trao đổi</option>
                             <option value="Đã trao đổi">Đã trao đổi</option>
+                            <option value="Vô hiệu hóa">Đã trao đổi</option>
                         </select>
                     </div>
 

@@ -13,6 +13,7 @@ import Swal from "sweetalert2";
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import {exchangeSchema} from "../../validate/validate";
 import {createExchange} from "../../service/exchangeService";
+import {formatDate} from "../../service/format";
 
 const PostDetail = () => {
     const [images, setImages] = useState([]);
@@ -28,12 +29,15 @@ const PostDetail = () => {
 
     useEffect(() => {
         if (postId) {
-            getAllImagesByPostId(postId).then(response => {
-                setImages(response.data);
-            }).catch(error => console.log(error))
-
             getPostById(postId).then(response => {
                 setPost(response.data);
+                getAllImagesByPostId(postId).then(res => {
+                    const avatarImage = {
+                        id: res.data.length + 1,
+                        url: response.data.avatar
+                    }
+                    setImages([avatarImage, ...res.data]);
+                }).catch(error => console.log(error))
             }).catch(error => console.log(error))
         }
         window.scrollTo({
@@ -58,7 +62,7 @@ const PostDetail = () => {
     }
 
     const handleShowModal = (post) => {
-        if (!account.id){
+        if (!account.id) {
             Swal.fire({
                 title: 'Vui lòng đăng nhập để trao đổi!',
                 icon: 'error',
@@ -71,7 +75,7 @@ const PostDetail = () => {
             return;
         }
 
-        if (post.account.id === account.id){
+        if (post.account.id === account.id) {
             Swal.fire({
                 title: 'Bạn là chủ của bài đăng này !',
                 text: 'Vui lòng chọn bài đăng khác để trao đổi !',
@@ -126,30 +130,43 @@ const PostDetail = () => {
                     }
                 </div>
 
-                <div className="col-lg-5 ms-5 pb-5">
-                    <h3 className="fw-semibold">{post.title}</h3>
-                    <p className="mb-2">
-                        Trạng thái: {post.status}
-                    </p>
+                {!_.isEmpty(post) &&
+                    <div className="col-lg-5 ms-5 pb-5">
+                        <h3 className="fw-semibold">{post.title}</h3>
+                        <p className="mb-2">
+                            <span className="fw-medium">Trạng thái:</span> {post.status}
+                        </p>
 
-                    <p className="mb-2">
-                        Người đăng: {post.account?.username}
-                    </p>
+                        <p className="mb-2">
+                            <span className="fw-medium">Người đăng:</span> {post.account?.username}
+                        </p>
 
-                    <p className="mb-2">Địa chỉ: {post.address}</p>
-                    <p className="mb-2">
-                        Mô tả: {post.description}
-                    </p>
+                        <p className="mb-2">
+                            <span className="fw-medium">Địa chỉ:</span> {post.address}</p>
+                        <p className="mb-2">
+                            <span className="fw-medium">Mô tả:</span> {post.description}
+                        </p>
 
-                    <p className="mb-2">
-                        Yêu cầu: {post.requirement}
-                    </p>
+                        <p className="mb-2">
+                            <span className="fw-medium">Yêu cầu:</span> {post.requirement}
+                        </p>
 
-                    <button className="btn btn-primary btn-lg"
-                            onClick={() => handleShowModal(post)}>
-                        Trao đổi
-                    </button>
-                </div>
+                        <p className="mb-2">
+                            <span className="fw-medium">Số lượt xem:</span> {post.countView}
+                        </p>
+
+                        <p className="mb-2">
+                            <span className="fw-medium">Ngày đăng bài:</span> {formatDate(post.createdAt)}
+                        </p>
+
+                        {post.status === 'Chưa trao đổi' &&
+                            <button className="btn btn-primary btn-lg mt-3"
+                                    onClick={() => handleShowModal(post)}>
+                                Trao đổi
+                            </button>
+                        }
+                    </div>
+                }
             </div>
 
             <Modal
@@ -205,7 +222,8 @@ const PostDetail = () => {
                                                        style={{marginLeft: '40px'}}>
                                                         {item.title}
                                                     </p>
-                                                    <img className="img-thumbnail" src={item.avatar} alt="" style={{aspectRatio: '1/1'}}/>
+                                                    <img className="img-thumbnail" src={item.avatar} alt=""
+                                                         style={{aspectRatio: '1/1'}}/>
                                                 </label>
                                                 <Field className="form-check position-absolute top-0"
                                                        type="radio" name="product" id={`product-${item.id}`}

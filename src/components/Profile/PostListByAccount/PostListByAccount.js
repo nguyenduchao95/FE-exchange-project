@@ -2,13 +2,17 @@ import React, {useEffect, useState} from 'react';
 import _ from "lodash";
 import {Table} from "reactstrap";
 import {Pagination} from "@mui/material";
-import {getAllPosts} from "../../../service/postService";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {formatDate} from "../../../service/format";
 import {getAllPostsByAccountId} from "../../../service/accountService";
 import {useSelector} from "react-redux";
+import {Modal} from "react-bootstrap";
+import {ErrorMessage, Field, Form, Formik} from "formik";
+import axios from "axios";
+import Swal from "sweetalert2";
 
 const PostListByAccount = () => {
+    const navigate = useNavigate();
     const [posts, setPosts] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
@@ -55,7 +59,6 @@ const PostListByAccount = () => {
         setCurrentPage(1);
     }
 
-
     return (
         <div className="col-9">
             <h3 className="text-uppercase text-center mb-5">Danh sách bài đăng</h3>
@@ -95,9 +98,9 @@ const PostListByAccount = () => {
                 </div>
             </div>
 
-            <button className="btn btn-lg btn-primary mb-3 btn-add-product">
+            <Link to="/create-post" className="btn btn-lg btn-primary mb-3">
                 Thêm bài đăng
-            </button>
+            </Link>
 
             <Table hover>
                 <thead>
@@ -112,23 +115,24 @@ const PostListByAccount = () => {
                 <tbody style={{verticalAlign: 'middle'}}>
                 {!_.isEmpty(posts) ?
                     posts.map((item, index) => (
+
                         <tr key={item.id} align="center">
                             <td>{index + 1}</td>
                             <td>
                                 <Link to={`/posts/${item.id}`} className="nav-link fw-medium text-start">
                                     <img className="img-thumbnail me-3" src={item.avatar} alt="" width={80}
-                                    style={{height: 80}}/>
+                                         style={{height: 80}}/>
                                     {item.title}
                                 </Link>
                             </td>
                             <td>{formatDate(item.createdAt)}</td>
                             <td>{item.status}</td>
                             <td>
-                                <button
+                                <Link to={`/edit-post/${item.id}`}
                                     className="btn border border-danger text-danger"
                                     style={{minWidth: '100px'}}>
                                     Sửa bài đăng
-                                </button>
+                                </Link>
                             </td>
                         </tr>
                     ))
