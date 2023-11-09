@@ -12,10 +12,10 @@ import axios from "axios";
 import Swal from "sweetalert2";
 
 const PostListByAccount = () => {
-    const navigate = useNavigate();
     const [posts, setPosts] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
+    const [category, setCategory] = useState("");
     const [title, setTitle] = useState("");
     const [status, setStatus] = useState("");
     const [startDate, setStartDate] = useState(null);
@@ -24,7 +24,7 @@ const PostListByAccount = () => {
     const account = useSelector(state => state.myState.account);
 
     useEffect(() => {
-        const data = {status, title, startDate, endDate};
+        const data = {category, status, title, startDate, endDate};
         getAllPostsByAccountId(account.id, currentPage - 1, 10, data).then(response => {
             setPosts(response.data.content);
             setTotalPages(response.data.totalPages);
@@ -33,10 +33,15 @@ const PostListByAccount = () => {
             top: 0,
             behavior: "smooth"
         })
-    }, [currentPage, status, title, startDate, endDate, render])
+    }, [currentPage, category, status, title, startDate, endDate, render])
 
     const changePage = (e, value) => {
         setCurrentPage(value);
+    }
+
+    const handleChangeCategory = (event) => {
+        setCategory(event.target.value);
+        setCurrentPage(1);
     }
 
     const handleChangeStatus = (event) => {
@@ -65,7 +70,17 @@ const PostListByAccount = () => {
             <div className="mb-3 py-4 px-3"
                  style={{backgroundColor: "rgb(220,219,219)"}}>
                 <div className='row g-2'>
-                    <div className="col-md-4">
+                    <div className="col-3">
+                        <label className="form-label fw-medium">Danh mục</label>
+                        <select className="form-select py-2 border-0"
+                                onChange={handleChangeCategory}>
+                            <option value="">Tất cả</option>
+                            <option value="Sản phẩm muốn trao đổi">Sản phẩm muốn trao đổi</option>
+                            <option value="Sản phẩm cần tìm trao đổi">Sản phẩm cần tìm trao đổi</option>
+                        </select>
+                    </div>
+
+                    <div className="col-2">
                         <label className="form-label fw-medium">Trạng thái</label>
                         <select className="form-select py-2 border-0"
                                 onChange={handleChangeStatus}>
@@ -76,7 +91,7 @@ const PostListByAccount = () => {
                         </select>
                     </div>
 
-                    <div className="col-md-4">
+                    <div className="col-3">
                         <label className="form-label fw-medium">Tìm kiếm theo tên bài đăng</label>
                         <input type="text" className="form-control border-0 py-2"
                                placeholder="Nhập từ khóa tìm kiếm"

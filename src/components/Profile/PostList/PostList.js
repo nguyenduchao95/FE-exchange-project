@@ -3,7 +3,7 @@ import _ from "lodash";
 import {Table} from "reactstrap";
 import {Pagination} from "@mui/material";
 import {getAllPosts} from "../../../service/postService";
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {formatDate} from "../../../service/format";
 
 const PostList = () => {
@@ -11,12 +11,15 @@ const PostList = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [username, setUsername] = useState("");
+    const [category, setCategory] = useState("");
     const [title, setTitle] = useState("");
     const [status, setStatus] = useState("");
     const [render, setRender] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        getAllPosts(currentPage - 1, 10, status, username, title).then(response => {
+        const data = {status, category, title, username}
+        getAllPosts(currentPage - 1, 10, data).then(response => {
             setPosts(response.data.content);
             setTotalPages(response.data.totalPages);
         }).catch(error => console.log(error));
@@ -24,14 +27,15 @@ const PostList = () => {
             top: 0,
             behavior: "smooth"
         })
-    }, [currentPage, status, username, title, render])
-
-    useEffect(() => {
-
-    }, [])
+    }, [currentPage,category, status, username, title, render])
 
     const changePage = (e, value) => {
         setCurrentPage(value);
+    }
+
+    const handleChangeCategory = (event) => {
+        setCategory(event.target.value);
+        setCurrentPage(1);
     }
 
     const handleChangeStatus = (event) => {
@@ -50,17 +54,25 @@ const PostList = () => {
     }
 
     const showPostDetail = (post) => {
-
+        navigate(`/posts/${post.id}`);
     }
-
-
     return (
         <div className="col-9">
             <h3 className="text-uppercase text-center mb-5">Danh sách bài đăng</h3>
             <div className="mb-3 py-4 px-3"
                  style={{backgroundColor: "rgb(220,219,219)"}}>
-                <div className={'row g-2'}>
-                    <div className="col-md-4">
+                <div className='row g-2'>
+                    <div className="col-3">
+                        <label className="form-label fw-medium">Danh mục</label>
+                        <select className="form-select py-2 border-0"
+                                onChange={handleChangeCategory}>
+                            <option value="">Tất cả</option>
+                            <option value="Sản phẩm muốn trao đổi">Sản phẩm muốn trao đổi</option>
+                            <option value="Sản phẩm cần tìm trao đổi">Sản phẩm cần tìm trao đổi</option>
+                        </select>
+                    </div>
+
+                    <div className="col-3">
                         <label className="form-label fw-medium">Trạng thái</label>
                         <select className="form-select py-2 border-0"
                                 onChange={handleChangeStatus}>
@@ -68,11 +80,11 @@ const PostList = () => {
                             <option value="Chưa trao đổi">Chưa trao đổi</option>
                             <option value="Chờ trao đổi">Chờ trao đổi</option>
                             <option value="Đã trao đổi">Đã trao đổi</option>
-                            <option value="Vô hiệu hóa">Đã trao đổi</option>
+                            <option value="Vô hiệu hóa">Vô hiệu hóa</option>
                         </select>
                     </div>
 
-                    <div className="col-md-4">
+                    <div className="col-3">
                         <label className="form-label fw-medium">Tìm kiếm theo người đăng</label>
                         <input type="text" className="form-control border-0 py-2"
                                placeholder="Nhập từ khóa tìm kiếm"
@@ -80,7 +92,7 @@ const PostList = () => {
                                onChange={handleChangeUsername}/>
                     </div>
 
-                    <div className="col-md-4">
+                    <div className="col-3">
                         <label className="form-label fw-medium">Tìm kiếm theo tên bài đăng</label>
                         <input type="text" className="form-control border-0 py-2"
                                placeholder="Nhập từ khóa tìm kiếm"

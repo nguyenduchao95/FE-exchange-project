@@ -1,16 +1,68 @@
 import './register.scss';
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import {Link, useNavigate} from "react-router-dom";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import * as Yup from 'yup';
 import axios from "axios";
 import Swal from "sweetalert2";
-
 
 function Register() {
     let navigate = useNavigate();
     const [registerError, setRegisterError] = useState('');
 
+    useEffect(()=>{
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        })
+    }, [])
+
+    const handleRegister = (values) => {
+        const account = {
+            username: values.username,
+            password: values.password,
+            name: values.name,
+            address: values.address,
+            phone: values.phone
+        }
+
+        const createAccount = (account) => {
+            axios.post('http://localhost:8080/register', account).then(resp => {
+                Swal.fire({
+                    title: 'Đăng ký thành công !',
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then();
+                navigate('/login');
+            }).catch(err => {
+                setRegisterError(err.response.data)
+            })
+        }
+
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                position => {
+                    account.latitude = position.coords.latitude;
+                    account.longitude = position.coords.longitude;
+                    createAccount(account);
+                },
+                error => {
+                    Swal.fire({
+                        title: 'Vui lòng bật định vị để đăng ký tài khoản !',
+                        icon: 'warning',
+                        showConfirmButton: true,
+                    }).then();
+                }
+            );
+        } else {
+            createAccount(account);
+        }
+    }
+
+    const checkUsername = (account) => {
+        return axios.post('http://localhost:8080/register/check-username', account);
+    }
 
     return (
         <section className="">
@@ -33,41 +85,26 @@ function Register() {
                                         validationSchema={
                                             Yup.object().shape({
                                                 username: Yup.string().required('Tài khoản không được để trống!')
-                                                    .matches(/^[a-zA-Z0-9]{6,}$/, 'Tài khoản phải có ít nhất 6 kí tự, không chứa kí tự đặc biệt'),
+                                                    .matches(/^[a-zA-Z0-9]{6,}$/, 'Tài khoản phải có ít nhất 6 kí tự, không chứa kí tự đặc biệt')
+                                                    .test("Check username", "Tên đăng nhập đã tồn tại", async (value) => {
+                                                        const isExist = await checkUsername({username: value});
+                                                        return !isExist.data;
+                                                    }),
                                                 password: Yup.string().required('Mật khẩu không được để trống!')
                                                     .min(6, 'Mật khẩu phải ít nhất 6 kí tự'),
                                                 name: Yup.string().required('Họ tên không được để trống!'),
                                                 confirmPassword: Yup.string()
                                                     .required('Mật khẩu không được để trống!')
                                                     .oneOf([Yup.ref('password')], 'Xác nhận mật khẩu không khớp'),
-                                                address: Yup.string().matches(/^(((\+|)84)|0)(3|5|7|8|9)+([0-9]{8})\b$/, 'Đây không phải là số điện thoại')
+                                                phone: Yup.string().matches(/^(((\+|)84)|0)(3|5|7|8|9)+([0-9]{8})\b$/, 'Đây không phải là số điện thoại')
                                                     .required('Vui lòng không được để trống'),
-                                                phone: Yup.string().required('Số điện thoại không được để trống!')
-                                                    .matches(/^\d{10}$/, 'Số điện thoại là dãy 10 chữ số'),
+                                                address: Yup.string().required('Địa chỉ không được để trống!')
                                             })
                                         }
                                         onSubmit={values => {
-                                            let account = {
-                                                username: values.username,
-                                                password: values.password,
-                                                name: values.name,
-                                                address: values.address,
-                                                phone: values.phone,
-                                            }
-                                            axios.post('http://localhost:8080/register', account).then(resp => {
-                                                Swal.fire({
-                                                    title: 'Đăng ký thành công !',
-                                                    icon: 'success',
-                                                    showConfirmButton: false,
-                                                    timer: 1500
-                                                }).then();
-                                                navigate('/login');
-                                            }).catch(err => {
-                                                setRegisterError(err.response.data)
-                                            })
+                                            handleRegister(values);
                                         }
                                         }>
-                                        {({errors}) => (
                                             <Form>
                                                 <div className="form-outline mb-2">
                                                     <label className="form-label" htmlFor="username">Họ tên <span
@@ -148,7 +185,6 @@ function Register() {
                                                     </Link>
                                                 </div>
                                             </Form>
-                                        )}
                                     </Formik>
                                 </div>
                             </div>

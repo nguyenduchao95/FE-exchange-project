@@ -9,3 +9,11 @@ input::-webkit-inner-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
+
+.nav-link {
+  $color-primary: rgb(0, 185, 142);
+  &:hover {
+    color: $color-primary !important;
+    cursor: pointer;
+  }
+}

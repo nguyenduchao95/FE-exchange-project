@@ -3,7 +3,6 @@ import image_default from '../../../image/user-image.png';
 import {getAccountById} from "../../../service/accountService";
 import EditAccountInformation from "./EditAccountInformation";
 import _ from "lodash";
-import {formatDate} from "../../../service/format";
 import {useSelector} from "react-redux";
 
 const AccountInformation = () => {

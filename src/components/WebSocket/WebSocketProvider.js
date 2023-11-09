@@ -1,11 +1,10 @@
-import React, {createContext, useState} from 'react';
+import React, {createContext, useEffect, useState} from 'react';
 import Stomp from "stompjs";
 import {useDispatch, useSelector} from "react-redux";
 import _ from "lodash";
 import {useNavigate} from "react-router-dom";
 import {countUnreadMessagesByReceiverId} from "../../service/messageService";
-import {removeAccount} from "../../service/accountService";
-import {countUnreadMessage} from "../../redux/reducer/accountSlice";
+import {countUnreadMessage, removeAccount} from "../../redux/reducer/accountSlice";
 
 export const WebSocketContext = createContext(null)
 const WebSocketProvider = ({children}) => {
@@ -16,6 +15,7 @@ const WebSocketProvider = ({children}) => {
     let socket;
     let stompClient;
     let ws;
+
 
     const sendNotify = (notify) => {
         if (!stompClient) return;
@@ -28,6 +28,7 @@ const WebSocketProvider = ({children}) => {
     }
 
     const onConnected = () => {
+        stompClient.debug = null;
         stompClient.subscribe(`/notify/${account.id}`, onNotifyReceived);
         stompClient.subscribe(`/message/${account.id}`, onMessageReceived);
     }

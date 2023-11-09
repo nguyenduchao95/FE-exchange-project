@@ -152,7 +152,11 @@ const SavePost = () => {
                                     <label htmlFor="category" className="form-label">
                                         Danh mục <span className="text-danger">*</span>
                                     </label>
-                                    <Field className="form-control" id="category" name="category" placeholder="Nhập danh mục"/>
+                                    <Field as="select" className="form-select" id="category" name="category" placeholder="Nhập danh mục">
+                                        <option value="">---Vui lòng chọn---</option>
+                                        <option value="Sản phẩm muốn trao đổi">Sản phẩm muốn trao đổi</option>
+                                        <option value="Sản phẩm cần tìm trao đổi">Sản phẩm cần tìm trao đổi</option>
+                                    </Field>
                                     <ErrorMessage name="category" className="text-danger" component="small"/>
                                 </div>
 

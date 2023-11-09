@@ -14,7 +14,11 @@ const HomePage = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        getAllPosts(currentPage - 1, 12, 'Chưa trao đổi').then(response => {
+        const data = {
+            status: 'Chưa trao đổi',
+            category: 'Sản phẩm muốn trao đổi'
+        }
+        getAllPosts(currentPage - 1, 12, data).then(response => {
             setPosts(response.data.content);
             setTotalPages(response.data.totalPages);
         }).catch(error => console.log(error))
@@ -32,7 +36,6 @@ const HomePage = () => {
     const changePage = (e, value) => {
         setCurrentPage(value);
     }
-
 
     return (
         <>

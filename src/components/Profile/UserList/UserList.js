@@ -37,7 +37,7 @@ const UserList = () => {
 
     useEffect(() => {
         if (user.id) {
-            getAllPostsByAccountId(user.id, currentPageModal - 1).then(response => {
+            getAllPostsByAccountId(user.id, currentPageModal - 1, 5, {}).then(response => {
                 setPosts(response.data.content);
                 setTotalPagesModal(response.data.totalPages);
             }).catch(error => console.log(error));
@@ -103,7 +103,8 @@ const UserList = () => {
     }
 
     const showUserDetail = (user) => {
-        setUser(user);
+        setUser({...user});
+        setCurrentPageModal(1);
         setShowModal(true);
     }
 
@@ -205,7 +206,7 @@ const UserList = () => {
                     <Modal.Body>
                         <div className="row">
                             <div className="col-4 text-center">
-                                <img src={user.avatar ? user.avatar : image_user} alt="Chưa có avatar" height={200}
+                                <img src={user.avatar ? user.avatar : image_user} alt="" height={200}
                                      width={200}/>
                             </div>
                             <div className="col-7">

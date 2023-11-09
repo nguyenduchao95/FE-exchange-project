@@ -1,9 +1,8 @@
 import {createSlice} from "@reduxjs/toolkit";
-import {getAccountLogin, removeAccount} from "../../service/accountService";
 
 
 const initialState = {
-    account: localStorage.getItem("account") ?
+    account: JSON.parse(localStorage.getItem("account")) ?
         JSON.parse(localStorage.getItem("account")) :
         {},
     unreadMessage: 0,
@@ -17,7 +16,6 @@ const accountSlice = createSlice({
     initialState,
     reducers: {
         editAccount: (state, action)=>{
-            console.log(action)
             state.account = action.payload;
         },
         countUnreadMessage: (state, action)=>{
@@ -32,20 +30,20 @@ const accountSlice = createSlice({
         changeStatus: (state)=>{
             state.toggleStatus = !state.toggleStatus;
         },
-    },
-    extraReducers: builder => {
-        builder.addCase(getAccountLogin.fulfilled, (state, action) => {
+        removeAccount: (state)=>{
+            state.account = {};
+        },
+        getAccountLogin: (state, action)=>{
             state.account = action.payload;
-        })
-        builder.addCase(removeAccount.fulfilled,(state, action)=>{
-            state.account = null;
-        })
+        },
     }
 })
 
 export const {
     editAccount,
     countUnreadMessage,
+    getAccountLogin,
+    removeAccount,
     countUnreadNotify,
     getAllNotify,
     changeStatus

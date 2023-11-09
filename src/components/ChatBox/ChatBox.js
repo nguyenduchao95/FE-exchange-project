@@ -10,11 +10,12 @@ import {formatDateTimeMessage} from "../../service/format";
 import image_default from '../../image/user-image.png';
 import {WebSocketContext} from "../WebSocket/WebSocketProvider";
 import {
+    getAccountById,
     getPostPinByAccountSellAndAccountBuy,
     listUserAndUnreadMessage,
     searchUsersMessage
 } from "../../service/accountService";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {countUnreadMessage} from "../../redux/reducer/accountSlice";
 
 const ChatBox = () => {
@@ -29,6 +30,7 @@ const ChatBox = () => {
         const chatRef = useRef(null);
         const dispatch = useDispatch();
         const navigate = useNavigate();
+        const {userId} = useParams();
 
         const {sendMessage, messageReceiver} = useContext(WebSocketContext);
 
@@ -37,6 +39,13 @@ const ChatBox = () => {
         useEffect(() => {
             if (_.isEmpty(account)) {
                 navigate("/403");
+            }
+            if (userId) {
+                getAccountById(userId).then(response => {
+                    setSelectedAccount(response.data);
+                }).catch(error => {
+                    console.log(error);
+                })
             }
             window.scrollTo({
                 top: 0,
@@ -74,7 +83,6 @@ const ChatBox = () => {
                 getPostPinByAccountSellAndAccountBuy(account.id, selectedAccount.id)
                     .then(response => {
                         setPostPin(response.data);
-                        console.log(response.data)
                     }).catch(error => {
                     console.log(error);
                 })
@@ -185,26 +193,26 @@ const ChatBox = () => {
                             <div className="chat">
                                 {!_.isEmpty(selectedAccount) ?
                                     <>
-                                        <div className="chat-header clearfix position-relative">
-                                            <div className="row">
-                                                <div className="col-lg-6">
-                                                    <span>
-                                                        <img
-                                                            src={selectedAccount.avatar ? selectedAccount.avatar : image_default}
-                                                            alt="avatar" style={{width: '50px', height: '50px'}}/>
-                                                    </span>
+                                        <div className="chat-header clearfix bg-light">
+                                            <div className="row align-items-center">
+                                                <div className="col-8">
+                                                    <img
+                                                        src={selectedAccount.avatar ? selectedAccount.avatar : image_default}
+                                                        alt="avatar" style={{width: '50px', height: '50px'}}/>
                                                     <div className="chat-about">
                                                         <h6 className="m-b-0">{selectedAccount.username}</h6>
                                                     </div>
                                                 </div>
+                                                {!_.isEmpty(postPin) &&
+                                                    <Link to={`/posts/${postPin.exchange.postSell?.id}`} className="nav-link col-4 position-relative">
+                                                        <img src={postPin.exchange.postSell?.avatar}
+                                                             className="img-fluid" alt=""
+                                                             style={{aspectRatio: '1/1', width: '60px', borderRadius: '6px'}}/>
+                                                        <span className="ms-2 text-truncate">{postPin.exchange.postSell?.title}</span>
+                                                        <span className="position-absolute top-0 end-0"><i className="fa-solid fa-thumbtack"></i></span>
+                                                    </Link>
+                                                }
                                             </div>
-                                            {!_.isEmpty(postPin) &&
-                                                <div className="bg-light position-absolute start-0 end-0 top-100" style={{zIndex: '10'}}>
-                                                    <img src={postPin.exchange.postSell?.avatar} className="img-thumbnail" alt=""
-                                                         style={{aspectRatio: '1/1', width: '80px'}} />
-                                                    <span className="ms-2">{postPin.exchange.postSell?.title}</span>
-                                                </div>
-                                            }
                                         </div>
                                         <div className="chat-history" style={{height: '500px', overflowY: 'auto'}}
                                              ref={chatRef}>

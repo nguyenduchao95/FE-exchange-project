@@ -1,5 +1,6 @@
 import instance from "./axiosConfig";
 import {createAsyncThunk} from "@reduxjs/toolkit";
+import axios from "axios";
 
 const API_URL = "/api/accounts";
 const getAllPostsByAccountId = (accountId, page = 0, size = 5, data) => {
@@ -45,6 +46,14 @@ const editPost = (data) =>{
     return instance.put(`${API_URL}/posts/${data.id}`, data);
 }
 
+const changeLocationAccount = (accountId, data) => {
+    return instance.put(`${API_URL}/${accountId}/location`, data);
+}
+
+const searchAroundHere = (data) => {
+    return axios.post(`http://localhost:8080${API_URL}/search-around-here`, data);
+}
+
 
 export {
     getAllPostsByAccountId,
@@ -57,18 +66,7 @@ export {
     getAllExchangesByAccountId,
     getPostPinByAccountSellAndAccountBuy,
     createPost,
-    editPost
+    editPost,
+    changeLocationAccount,
+    searchAroundHere
 };
-
-export const getAccountLogin = createAsyncThunk(
-    "/login",
-    async (account) => {
-        return account;
-    }
-)
-export const removeAccount = createAsyncThunk(
-    "/removeAccount",
-    async () => {
-        return {};
-    }
-)

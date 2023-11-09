@@ -1,22 +1,29 @@
 import './login.scss'
 import {Link, useNavigate} from "react-router-dom";
 import {ErrorMessage, Field, Form, Formik} from "formik";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useDispatch} from "react-redux";
 import axios from "axios";
 import * as Yup from 'yup';
-import {getAccountLogin} from "../../service/accountService";
 import Swal from "sweetalert2";
+import {getAccountLogin} from "../../redux/reducer/accountSlice";
 
 
 function Login() {
     const dispatch = useDispatch();
     const [remember, setRemember] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
+    const [loginError, setLoginError] = useState('');
+
+    useEffect(() => {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        })
+    }, [])
     const toggleShowPassword = () => {
         setShowPassword(!showPassword);
     };
-    const [loginError, setLoginError] = useState('');
     const navigate = useNavigate();
     return (
         <section className="bg-image">
@@ -47,7 +54,6 @@ function Login() {
                                             axios.post("http://localhost:8080/login", account).then(resp => {
                                                 dispatch(getAccountLogin(resp.data))
                                                 localStorage.setItem('account', JSON.stringify(resp.data));
-                                                localStorage.setItem('token', 'Bearer ' + resp.data.token);
                                                 Swal.fire({
                                                     title: 'Đăng nhập thành công !',
                                                     icon: 'success',
@@ -59,58 +65,58 @@ function Login() {
                                                 setLoginError(err.response.data);
                                             })
                                         }}>
-                                            <Form>
-                                                <div className="form-group py-2">
-                                                    <label className="form-label">Tên đăng nhập</label>
-                                                    <div className="input-field py-2">
-                                                        <span className="far fa-user p-2"></span>
-                                                        <Field type="text" id="username" name="username"
-                                                               placeholder="Tên đăng nhập"/>
-                                                    </div>
-                                                    <ErrorMessage name="username" className="text-danger"
-                                                                  component="div"/>
+                                        <Form>
+                                            <div className="form-group py-2">
+                                                <label className="form-label">Tên đăng nhập</label>
+                                                <div className="input-field py-2">
+                                                    <span className="far fa-user p-2"></span>
+                                                    <Field type="text" id="username" name="username"
+                                                           placeholder="Tên đăng nhập"/>
                                                 </div>
-                                                <div className="form-group py-1 mt-2">
-                                                    <label className="form-label">Mật khẩu</label>
-                                                    <div className="input-field">
-                                                        <span className="fas fa-lock px-2"></span>
-                                                        <Field type={showPassword ? "text" : "password"} id="password"
-                                                               name="password"
-                                                               placeholder="Mật khẩu"/>
-                                                        <button type="button" className="btn bg-white text-muted"
-                                                                onClick={toggleShowPassword}>
-                                                            <span className="far fa-eye-slash"></span>
-                                                        </button>
-                                                    </div>
-                                                    <ErrorMessage name="password" className="text-danger"
-                                                                  component="div"/>
-                                                </div>
-                                                {loginError && <div className="text-danger">{loginError}</div>}
-                                                <div className="form-inline my-3 text-center">
-                                                    <input type="checkbox" name="remember" id="remember"
-                                                           checked={remember}
-                                                           onChange={() => setRemember(!remember)}/>
-                                                    <label htmlFor="remember" className="text-muted">
-                                                        Ghi nhớ đăng nhập
-                                                    </label>
-                                                    <Link to={"/forgot-password"} className="forgot ms-4">Quên mật
-                                                        khẩu?</Link>
-                                                </div>
-
-                                                <div className="text-center mt-4">
-                                                    <button type="submit"
-                                                            className="btn btn-success border-0 btn-login btn-lg">
-                                                        Đăng nhập
+                                                <ErrorMessage name="username" className="text-danger"
+                                                              component="div"/>
+                                            </div>
+                                            <div className="form-group py-1 mt-2">
+                                                <label className="form-label">Mật khẩu</label>
+                                                <div className="input-field">
+                                                    <span className="fas fa-lock px-2"></span>
+                                                    <Field type={showPassword ? "text" : "password"} id="password"
+                                                           name="password"
+                                                           placeholder="Mật khẩu"/>
+                                                    <button type="button" className="btn bg-white text-muted"
+                                                            onClick={toggleShowPassword}>
+                                                        <span className="far fa-eye-slash"></span>
                                                     </button>
                                                 </div>
-                                                <div className="text-center pt-4 text-muted">
-                                                    Bạn chưa có tài khoản?
-                                                    <Link className="ms-2" to={"/register"}
-                                                          style={{color: '#00B98EFF'}}>
-                                                        <b>Đăng ký</b>
-                                                    </Link>
-                                                </div>
-                                            </Form>
+                                                <ErrorMessage name="password" className="text-danger"
+                                                              component="div"/>
+                                            </div>
+                                            {loginError && <div className="text-danger">{loginError}</div>}
+                                            <div className="form-inline my-3 text-center">
+                                                <input type="checkbox" name="remember" id="remember"
+                                                       checked={remember}
+                                                       onChange={() => setRemember(!remember)}/>
+                                                <label htmlFor="remember" className="text-muted">
+                                                    Ghi nhớ đăng nhập
+                                                </label>
+                                                <Link to={"/forgot-password"} className="forgot ms-4">Quên mật
+                                                    khẩu?</Link>
+                                            </div>
+
+                                            <div className="text-center mt-4">
+                                                <button type="submit"
+                                                        className="btn btn-success border-0 btn-login btn-lg">
+                                                    Đăng nhập
+                                                </button>
+                                            </div>
+                                            <div className="text-center pt-4 text-muted">
+                                                Bạn chưa có tài khoản?
+                                                <Link className="ms-2" to={"/register"}
+                                                      style={{color: '#00B98EFF'}}>
+                                                    <b>Đăng ký</b>
+                                                </Link>
+                                            </div>
+                                        </Form>
                                     </Formik>
                                 </div>
                                 <div className="mx-3 my-2 py-2 bordert">
