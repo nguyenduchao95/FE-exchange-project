@@ -16,7 +16,8 @@ const HomePage = () => {
     useEffect(() => {
         const data = {
             status: 'Chưa trao đổi',
-            category: 'Sản phẩm muốn trao đổi'
+            category: 'Sản phẩm muốn trao đổi',
+            sort: 'createdAt-desc'
         }
         getAllPosts(currentPage - 1, 12, data).then(response => {
             setPosts(response.data.content);

@@ -90,7 +90,9 @@ const EditAccountInformation = ({accountInfo}) => {
                             <Modal.Body>
                                 <div className="row">
                                     <div className="mb-3 col-6">
-                                        <label htmlFor="name" className="form-label">Họ và tên</label>
+                                        <label htmlFor="name" className="form-label">
+                                            Họ và tên <span className="text-danger">*</span>
+                                        </label>
                                         <Field type="text" className="form-control" id="name"
                                                placeholder="Nhập họ và tên" name="name"/>
                                         <ErrorMessage name="name" className="text-danger"
@@ -99,7 +101,7 @@ const EditAccountInformation = ({accountInfo}) => {
 
                                     <div className="mb-3 col-6">
                                         <label htmlFor="phone" className="form-label">
-                                            Số điện thoại
+                                            Số điện thoại <span className="text-danger">*</span>
                                         </label>
                                         <Field type="text" className="form-control" id="phone"
                                                placeholder="Nhập số điện thoại" name="phone"/>
@@ -109,7 +111,7 @@ const EditAccountInformation = ({accountInfo}) => {
 
                                     <div className="col-6 form-group mb-3">
                                         <label className="form-label" htmlFor="address">
-                                            Địa chỉ
+                                            Địa chỉ <span className="text-danger">*</span>
                                         </label>
                                         <Field className="form-control" id="address" type="text"
                                                placeholder="Nhập địa chỉ" name="address"/>
@@ -118,7 +120,9 @@ const EditAccountInformation = ({accountInfo}) => {
                                     </div>
 
                                     <div className="col-6 col-sm-6 mb-3">
-                                        <label htmlFor="avatar" className="form-label">Ảnh đại diện</label>
+                                        <label htmlFor="avatar" className="form-label">
+                                            Ảnh đại diện <span className="text-danger">*</span>
+                                        </label>
                                         <input type="file" className="form-control" id="avatar" name="avatar"
                                                ref={avatarRef}
                                                onChange={event => handleChangeAvatar(event, values)}/>

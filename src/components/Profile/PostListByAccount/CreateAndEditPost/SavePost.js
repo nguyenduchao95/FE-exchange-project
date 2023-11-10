@@ -11,6 +11,7 @@ import {getPostById} from "../../../../service/postService";
 import {savePostSchema} from "../../../../validate/validate";
 import AvatarUpload from "../../AccountInfomation/Avatar/AvatarUpload";
 import {createPost, editPost} from "../../../../service/accountService";
+import {getAllCategories} from "../../../../service/categoryService";
 
 const SavePost = () => {
     const [avatarURL, setAvatarURL] = useState("");
@@ -19,6 +20,7 @@ const SavePost = () => {
     const [imagesURLDelete, setImagesURLDelete] = useState([]);
     const [avatarFile, setAvatarFile] = useState(null);
     const [imagesFile, setImagesFile] = useState([]);
+    const [categories, setCategories] = useState([]);
     const [post, setPost] = useState({});
     const account = useSelector(state => state.myState.account);
     const navigate = useNavigate();
@@ -33,6 +35,10 @@ const SavePost = () => {
             navigate("/403");
             return;
         }
+
+        getAllCategories().then(response => {
+            setCategories(response.data);
+        }).catch(error => console.log(error))
         const callAPI = async () => {
             if (postId) {
                 const imagesPostData = await getAllImagesByPostId(postId);
@@ -44,7 +50,8 @@ const SavePost = () => {
             } else {
                 setPost({
                     title: "",
-                    category: "",
+                    categoryPost: "",
+                    categoryProduct: "",
                     address: "",
                     description: "",
                     requirement: "",
@@ -68,8 +75,11 @@ const SavePost = () => {
         if (imagesRef) imagesRef.current.value = null;
     }
 
-    const handleSaveHouse = (values) => {
-        const data = {...values};
+    const handleSavePost = (values) => {
+        const data = {
+            ...values,
+            categoryProduct: {id: values.categoryProduct}
+        };
         data.avatar = avatarURL;
         data.account = {id: account.id};
         if (postId) {
@@ -124,7 +134,8 @@ const SavePost = () => {
                 <Formik
                     initialValues={{
                         title: post.title,
-                        category: post.category,
+                        categoryPost: post.categoryPost,
+                        categoryProduct: post.categoryProduct?.id,
                         address: post.address,
                         description: post.description,
                         requirement: post.requirement,
@@ -133,13 +144,13 @@ const SavePost = () => {
                     }}
                     validationSchema={savePostSchema}
                     onSubmit={values => {
-                        handleSaveHouse(values);
+                        handleSavePost(values);
                     }}>
                     {({values}) => (
                         <Form>
                             <div className="row">
                                 <h2 className="text-center text-uppercase mb-5">{postId ? "Sửa đổi thông tin bài viết" : "Thêm bài viết mới"}</h2>
-                                <div className="mb-3 col-4">
+                                <div className="mb-3 col-3">
                                     <label htmlFor="title" className="form-label">
                                         Tên bài viết <span className="text-danger">*</span>
                                     </label>
@@ -148,19 +159,34 @@ const SavePost = () => {
                                     <ErrorMessage name="title" className="text-danger" component="small"/>
                                 </div>
 
-                                <div className="mb-3 col-4">
-                                    <label htmlFor="category" className="form-label">
-                                        Danh mục <span className="text-danger">*</span>
+                                <div className="mb-3 col-3">
+                                    <label htmlFor="categoryProduct" className="form-label">
+                                        Danh mục sản phẩm <span className="text-danger">*</span>
                                     </label>
-                                    <Field as="select" className="form-select" id="category" name="category" placeholder="Nhập danh mục">
+                                    <Field as="select" className="form-select" name="categoryProduct">
+                                        <option value="">---Vui lòng chọn---</option>
+                                        {!_.isEmpty(categories) && categories.map(item => (
+                                            <option value={item.id} key={item.id}>
+                                                {item.name}
+                                            </option>
+                                        ))}
+                                    </Field>
+                                    <ErrorMessage name="categoryProduct" className="text-danger" component="small"/>
+                                </div>
+
+                                <div className="mb-3 col-3">
+                                    <label htmlFor="categoryPost" className="form-label">
+                                        Danh mục bài viết <span className="text-danger">*</span>
+                                    </label>
+                                    <Field as="select" className="form-select" id="categoryPost" name="categoryPost">
                                         <option value="">---Vui lòng chọn---</option>
                                         <option value="Sản phẩm muốn trao đổi">Sản phẩm muốn trao đổi</option>
                                         <option value="Sản phẩm cần tìm trao đổi">Sản phẩm cần tìm trao đổi</option>
                                     </Field>
-                                    <ErrorMessage name="category" className="text-danger" component="small"/>
+                                    <ErrorMessage name="categoryPost" className="text-danger" component="small"/>
                                 </div>
 
-                                <div className="col-4 mb-3">
+                                <div className="col-3 mb-3">
                                     <label className="form-label" htmlFor="address">
                                         Địa chỉ <span className="text-danger">*</span>
                                     </label>

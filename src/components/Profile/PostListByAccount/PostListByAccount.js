@@ -15,7 +15,7 @@ const PostListByAccount = () => {
     const [posts, setPosts] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
-    const [category, setCategory] = useState("");
+    const [categoryPost, setCategoryPost] = useState("");
     const [title, setTitle] = useState("");
     const [status, setStatus] = useState("");
     const [startDate, setStartDate] = useState(null);
@@ -24,7 +24,7 @@ const PostListByAccount = () => {
     const account = useSelector(state => state.myState.account);
 
     useEffect(() => {
-        const data = {category, status, title, startDate, endDate};
+        const data = {categoryPost, status, title, startDate, endDate};
         getAllPostsByAccountId(account.id, currentPage - 1, 10, data).then(response => {
             setPosts(response.data.content);
             setTotalPages(response.data.totalPages);
@@ -33,14 +33,14 @@ const PostListByAccount = () => {
             top: 0,
             behavior: "smooth"
         })
-    }, [currentPage, category, status, title, startDate, endDate, render])
+    }, [currentPage, categoryPost, status, title, startDate, endDate, render])
 
     const changePage = (e, value) => {
         setCurrentPage(value);
     }
 
-    const handleChangeCategory = (event) => {
-        setCategory(event.target.value);
+    const handleChangeCategoryPost = (event) => {
+        setCategoryPost(event.target.value);
         setCurrentPage(1);
     }
 
@@ -73,7 +73,7 @@ const PostListByAccount = () => {
                     <div className="col-3">
                         <label className="form-label fw-medium">Danh mục</label>
                         <select className="form-select py-2 border-0"
-                                onChange={handleChangeCategory}>
+                                onChange={handleChangeCategoryPost}>
                             <option value="">Tất cả</option>
                             <option value="Sản phẩm muốn trao đổi">Sản phẩm muốn trao đổi</option>
                             <option value="Sản phẩm cần tìm trao đổi">Sản phẩm cần tìm trao đổi</option>

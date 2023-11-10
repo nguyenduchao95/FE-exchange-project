@@ -30,14 +30,14 @@ const SearchKey = () => {
     }
 
     return (
-        <div className="container min-vh-100">
+        <div className="container">
             {!_.isEmpty(posts) ?
                 <>
                     <h2 className="text-center m-5">Danh sách sản phẩm trao đổi với từ khóa: {key}</h2>
                     <Post posts={posts} totalPages={totalPages} changePage={changePage}/>
                 </>
                 :
-                <div className="text-center">
+                <div className="text-center min-vh-100">
                     <div className="text-danger fs-5">
                         Không tìm thấy bài viết với từ khóa: {key}
                     </div>

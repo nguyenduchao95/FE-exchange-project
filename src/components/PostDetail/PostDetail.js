@@ -152,7 +152,11 @@ const PostDetail = () => {
                         </p>
 
                         <p className="mb-2">
-                            <span className="fw-medium">Danh mục:</span> {post.category}
+                            <span className="fw-medium">Danh mục sản phẩm:</span> {post.categoryProduct?.name}
+                        </p>
+
+                        <p className="mb-2">
+                            <span className="fw-medium">Danh mục bài viết:</span> {post.categoryPost}
                         </p>
 
                         <p className="mb-2">
@@ -163,13 +167,13 @@ const PostDetail = () => {
                             <span className="fw-medium">Ngày đăng bài:</span> {formatDate(post.createdAt)}
                         </p>
 
-                        {post.status === 'Chưa trao đổi' && post.category === 'Sản phẩm muốn trao đổi' ?
+                        {post.status === 'Chưa trao đổi' && post.categoryPost === 'Sản phẩm muốn trao đổi' ?
                             <button className="btn btn-primary btn-lg mt-3"
                                     onClick={() => handleShowModal(post)}>
                                 <i className="fa-solid fa-rotate me-2"></i>Trao đổi
                             </button>
                             :
-                            post.status === 'Chưa trao đổi' && post.category === 'Sản phẩm cần tìm trao đổi' ?
+                            post.status === 'Chưa trao đổi' && post.categoryPost === 'Sản phẩm cần tìm trao đổi' ?
                                 <Link to={`/chat/${post.account.id}`} className="btn btn-primary btn-lg mt-3">
                                     <i className="fa-solid fa-message me-2"></i>
                                     Nhắn tin ngay

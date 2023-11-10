@@ -6,7 +6,7 @@ import {Link} from "react-router-dom";
 const Post = ({posts, totalPages, changePage}) => {
     return (
         <div className="container">
-            <div className="row g-4">
+            <div className="row g-4 min-vh-100">
                 {
                     !_.isEmpty(posts) ?
                         posts.map(post => {
@@ -17,7 +17,7 @@ const Post = ({posts, totalPages, changePage}) => {
                                             <div className="position-relative overflow-hidden">
                                                 <div>
                                                     <img className="img-thumbnail" src={post.avatar} alt=""
-                                                    style={{aspectRatio: '1/1'}}/>
+                                                         style={{aspectRatio: '1/1'}}/>
                                                 </div>
                                             </div>
                                             <div className="pt-4 px-3">
@@ -40,14 +40,13 @@ const Post = ({posts, totalPages, changePage}) => {
                         :
                         null
                 }
-
-                {totalPages > 0 &&
-                    <div className="col-12 mt-5 d-flex justify-content-center">
-                        <Pagination count={totalPages} size="large" variant="outlined" shape="rounded"
-                                    onChange={changePage} color="primary"/>
-                    </div>
-                }
             </div>
+            {totalPages > 0 &&
+                <div className="mt-5 d-flex justify-content-center">
+                    <Pagination count={totalPages} size="large" variant="outlined" shape="rounded"
+                                onChange={changePage} color="primary"/>
+                </div>
+            }
         </div>
     )
 };

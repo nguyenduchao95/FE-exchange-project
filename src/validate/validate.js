@@ -51,7 +51,9 @@ const changePasswordSchema = Yup.object().shape({
 const savePostSchema = Yup.object().shape({
     title: Yup.string()
         .required('Vui lòng không được để trống'),
-    category: Yup.string()
+    categoryPost: Yup.string()
+        .required('Vui lòng không được để trống'),
+    categoryProduct: Yup.string()
         .required('Vui lòng không được để trống'),
     address: Yup.string()
         .required('Vui lòng không được để trống'),

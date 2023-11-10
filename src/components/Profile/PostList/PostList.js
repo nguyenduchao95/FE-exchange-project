@@ -11,14 +11,14 @@ const PostList = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [username, setUsername] = useState("");
-    const [category, setCategory] = useState("");
+    const [categoryPost, setCategoryPost] = useState("");
     const [title, setTitle] = useState("");
     const [status, setStatus] = useState("");
     const [render, setRender] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const data = {status, category, title, username}
+        const data = {status, categoryPost, title, username}
         getAllPosts(currentPage - 1, 10, data).then(response => {
             setPosts(response.data.content);
             setTotalPages(response.data.totalPages);
@@ -27,14 +27,14 @@ const PostList = () => {
             top: 0,
             behavior: "smooth"
         })
-    }, [currentPage,category, status, username, title, render])
+    }, [currentPage,categoryPost, status, username, title, render])
 
     const changePage = (e, value) => {
         setCurrentPage(value);
     }
 
-    const handleChangeCategory = (event) => {
-        setCategory(event.target.value);
+    const handleChangeCategoryPost = (event) => {
+        setCategoryPost(event.target.value);
         setCurrentPage(1);
     }
 
@@ -63,9 +63,9 @@ const PostList = () => {
                  style={{backgroundColor: "rgb(220,219,219)"}}>
                 <div className='row g-2'>
                     <div className="col-3">
-                        <label className="form-label fw-medium">Danh mục</label>
+                        <label className="form-label fw-medium">Danh mục bài viết</label>
                         <select className="form-select py-2 border-0"
-                                onChange={handleChangeCategory}>
+                                onChange={handleChangeCategoryPost}>
                             <option value="">Tất cả</option>
                             <option value="Sản phẩm muốn trao đổi">Sản phẩm muốn trao đổi</option>
                             <option value="Sản phẩm cần tìm trao đổi">Sản phẩm cần tìm trao đổi</option>
