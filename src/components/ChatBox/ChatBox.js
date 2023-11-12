@@ -196,20 +196,29 @@ const ChatBox = () => {
                                         <div className="chat-header clearfix bg-light">
                                             <div className="row align-items-center">
                                                 <div className="col-8">
-                                                    <img
-                                                        src={selectedAccount.avatar ? selectedAccount.avatar : image_default}
-                                                        alt="avatar" style={{width: '50px', height: '50px'}}/>
-                                                    <div className="chat-about">
-                                                        <h6 className="m-b-0">{selectedAccount.username}</h6>
-                                                    </div>
+                                                    <Link to={`/profile-user/${selectedAccount.id}`} className="nav-link">
+                                                        <img
+                                                            src={selectedAccount.avatar ? selectedAccount.avatar : image_default}
+                                                            alt="avatar" style={{width: '50px', height: '50px'}}/>
+                                                        <div className="chat-about">
+                                                            <h6 className="m-b-0">{selectedAccount.username}</h6>
+                                                        </div>
+                                                    </Link>
                                                 </div>
                                                 {!_.isEmpty(postPin) &&
-                                                    <Link to={`/posts/${postPin.exchange.postSell?.id}`} className="nav-link col-4 position-relative">
+                                                    <Link to={`/posts/${postPin.exchange.postSell?.id}`}
+                                                          className="nav-link col-4 position-relative">
                                                         <img src={postPin.exchange.postSell?.avatar}
                                                              className="img-fluid" alt=""
-                                                             style={{aspectRatio: '1/1', width: '60px', borderRadius: '6px'}}/>
-                                                        <span className="ms-2 text-truncate">{postPin.exchange.postSell?.title}</span>
-                                                        <span className="position-absolute top-0 end-0"><i className="fa-solid fa-thumbtack"></i></span>
+                                                             style={{
+                                                                 aspectRatio: '1/1',
+                                                                 width: '60px',
+                                                                 borderRadius: '6px'
+                                                             }}/>
+                                                        <span
+                                                            className="ms-2 text-truncate">{postPin.exchange.postSell?.title}</span>
+                                                        <span className="position-absolute top-0 end-0"><i
+                                                            className="fa-solid fa-thumbtack"></i></span>
                                                     </Link>
                                                 }
                                             </div>

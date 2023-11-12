@@ -38,7 +38,9 @@ const Post = ({posts, totalPages, changePage}) => {
                             )
                         })
                         :
-                        null
+                        <div className="text-center text-danger fs-5 fw-medium">
+                            Không có sản phẩm nào phù hợp
+                        </div>
                 }
             </div>
             {totalPages > 0 &&

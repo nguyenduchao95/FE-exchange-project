@@ -10,21 +10,22 @@ import {Modal} from "react-bootstrap";
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import axios from "axios";
 import Swal from "sweetalert2";
+import {getAllCategories} from "../../../service/categoryService";
 
 const PostListByAccount = () => {
     const [posts, setPosts] = useState([]);
     const [totalPages, setTotalPages] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
     const [categoryPost, setCategoryPost] = useState("");
-    const [title, setTitle] = useState("");
+    const [categories, setCategories] = useState([]);
+    const [categoryProductName, setCategoryProductName] = useState("");
     const [status, setStatus] = useState("");
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
-    const [render, setRender] = useState(false);
     const account = useSelector(state => state.myState.account);
 
     useEffect(() => {
-        const data = {categoryPost, status, title, startDate, endDate};
+        const data = {categoryPost, categoryProductName, status, startDate, endDate};
         getAllPostsByAccountId(account.id, currentPage - 1, 10, data).then(response => {
             setPosts(response.data.content);
             setTotalPages(response.data.totalPages);
@@ -33,7 +34,13 @@ const PostListByAccount = () => {
             top: 0,
             behavior: "smooth"
         })
-    }, [currentPage, categoryPost, status, title, startDate, endDate, render])
+    }, [currentPage, categoryPost, categoryProductName, status, startDate, endDate])
+
+    useEffect(() => {
+        getAllCategories().then(response => {
+            setCategories(response.data);
+        }).catch(error => console.log(error))
+    }, [])
 
     const changePage = (e, value) => {
         setCurrentPage(value);
@@ -49,8 +56,8 @@ const PostListByAccount = () => {
         setCurrentPage(1);
     }
 
-    const handleChangeTitle = (event) => {
-        setTitle(event.target.value);
+    const handleChangeCategoryProductName = (event) => {
+        setCategoryProductName(event.target.value);
         setCurrentPage(1);
     }
 
@@ -71,12 +78,29 @@ const PostListByAccount = () => {
                  style={{backgroundColor: "rgb(220,219,219)"}}>
                 <div className='row g-2'>
                     <div className="col-3">
-                        <label className="form-label fw-medium">Danh mục</label>
+                        <label className="form-label fw-medium">
+                            Danh mục bài đăng
+                        </label>
                         <select className="form-select py-2 border-0"
                                 onChange={handleChangeCategoryPost}>
                             <option value="">Tất cả</option>
                             <option value="Sản phẩm muốn trao đổi">Sản phẩm muốn trao đổi</option>
                             <option value="Sản phẩm cần tìm trao đổi">Sản phẩm cần tìm trao đổi</option>
+                        </select>
+                    </div>
+
+                    <div className="col-3">
+                        <label className="form-label fw-medium" htmlFor="categoryProduct">
+                            Danh mục sản phẩm
+                        </label>
+                        <select id="categoryProduct" className="form-select border-0 py-2"
+                                onChange={handleChangeCategoryProductName}>
+                            <option value="">Tất cả</option>
+                            {!_.isEmpty(categories) && categories.map(item => (
+                                <option value={item.name} key={item.id}>
+                                    {item.name}
+                                </option>
+                            ))}
                         </select>
                     </div>
 
@@ -89,14 +113,6 @@ const PostListByAccount = () => {
                             <option value="Chờ trao đổi">Chờ trao đổi</option>
                             <option value="Đã trao đổi">Đã trao đổi</option>
                         </select>
-                    </div>
-
-                    <div className="col-3">
-                        <label className="form-label fw-medium">Tìm kiếm theo tên bài đăng</label>
-                        <input type="text" className="form-control border-0 py-2"
-                               placeholder="Nhập từ khóa tìm kiếm"
-                               value={title}
-                               onChange={handleChangeTitle}/>
                     </div>
 
                     <div className="col-2">

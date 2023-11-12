@@ -5,6 +5,7 @@ import {Pagination} from "@mui/material";
 import {getAllPosts} from "../../../service/postService";
 import {Link, useNavigate} from "react-router-dom";
 import {formatDate} from "../../../service/format";
+import {getAllCategories} from "../../../service/categoryService";
 
 const PostList = () => {
     const [posts, setPosts] = useState([]);
@@ -12,13 +13,19 @@ const PostList = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [username, setUsername] = useState("");
     const [categoryPost, setCategoryPost] = useState("");
-    const [title, setTitle] = useState("");
+    const [categories, setCategories] = useState([]);
+    const [categoryProductName, setCategoryProductName] = useState("");
     const [status, setStatus] = useState("");
-    const [render, setRender] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const data = {status, categoryPost, title, username}
+        getAllCategories().then(response => {
+            setCategories(response.data);
+        }).catch(error => console.log(error))
+    }, [])
+
+    useEffect(() => {
+        const data = {status, categoryPost, categoryProductName, username}
         getAllPosts(currentPage - 1, 10, data).then(response => {
             setPosts(response.data.content);
             setTotalPages(response.data.totalPages);
@@ -27,7 +34,7 @@ const PostList = () => {
             top: 0,
             behavior: "smooth"
         })
-    }, [currentPage,categoryPost, status, username, title, render])
+    }, [currentPage,categoryPost, categoryProductName, status, username])
 
     const changePage = (e, value) => {
         setCurrentPage(value);
@@ -38,6 +45,11 @@ const PostList = () => {
         setCurrentPage(1);
     }
 
+    const handleChangeCategoryProductName = (event) => {
+        setCategoryProductName(event.target.value);
+        setCurrentPage(1);
+    }
+
     const handleChangeStatus = (event) => {
         setStatus(event.target.value);
         setCurrentPage(1);
@@ -45,11 +57,6 @@ const PostList = () => {
 
     const handleChangeUsername = (event) => {
         setUsername(event.target.value);
-        setCurrentPage(1);
-    }
-
-    const handleChangeTitle = (event) => {
-        setTitle(event.target.value);
         setCurrentPage(1);
     }
 
@@ -73,6 +80,21 @@ const PostList = () => {
                     </div>
 
                     <div className="col-3">
+                        <label className="form-label fw-medium" htmlFor="categoryProduct">
+                            Danh mục sản phẩm
+                        </label>
+                        <select id="categoryProduct" className="form-select border-0 py-2"
+                                onChange={handleChangeCategoryProductName}>
+                            <option value="">Tất cả</option>
+                            {!_.isEmpty(categories) && categories.map(item => (
+                                <option value={item.name} key={item.id}>
+                                    {item.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="col-3">
                         <label className="form-label fw-medium">Trạng thái</label>
                         <select className="form-select py-2 border-0"
                                 onChange={handleChangeStatus}>
@@ -90,14 +112,6 @@ const PostList = () => {
                                placeholder="Nhập từ khóa tìm kiếm"
                                value={username}
                                onChange={handleChangeUsername}/>
-                    </div>
-
-                    <div className="col-3">
-                        <label className="form-label fw-medium">Tìm kiếm theo tên bài đăng</label>
-                        <input type="text" className="form-control border-0 py-2"
-                               placeholder="Nhập từ khóa tìm kiếm"
-                               value={title}
-                               onChange={handleChangeTitle}/>
                     </div>
                 </div>
             </div>
