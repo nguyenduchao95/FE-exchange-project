@@ -4,16 +4,19 @@ import {Link, useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
 import _ from 'lodash';
 import icon_user from '../../image/icons8-user-50.png';
-import image_default from '../../image/user-image.png';
 import {format} from "date-fns";
 import {changeLocationAccount} from "../../service/accountService";
 import {useEffect, useState} from "react";
 import {countUnreadMessagesByReceiverId} from "../../service/messageService";
 import {countUnreadMessage, editAccount, removeAccount} from "../../redux/reducer/accountSlice";
 import Swal from "sweetalert2";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import {getAllSchedulesByAccountId} from "../../service/scheduleService";
 
 const Navbar = () => {
     const [keySearch, setKeySearch] = useState("");
+    const [exchangeDays, setExchangeDays] = useState([]);
     const {unreadMessage, unreadNotify, notifyList, account} = useSelector(state => state.myState);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -22,6 +25,15 @@ const Navbar = () => {
         if (account.id) {
             countUnreadMessagesByReceiverId(account.id).then(response => {
                 dispatch(countUnreadMessage(response.data));
+            }).catch(error => {
+                console.log(error);
+            })
+
+            getAllSchedulesByAccountId(account.id).then(response => {
+                const arr = response.data.map(item => {
+                    return {date: item.date, holidayName: `Trao đổi tại ${item.address}`}
+                })
+                setExchangeDays(arr);
             }).catch(error => {
                 console.log(error);
             })
@@ -158,45 +170,30 @@ const Navbar = () => {
                                 </div>
 
 
-                                <div className="nav-item dropdown ms-2">
-                                    <button className="nav-link dropdown-toggle" data-bs-toggle="dropdown"
-                                    >
-                                        <i className="bi bi-bell-fill"></i>
-                                        {unreadNotify ?
-                                            <sup
-                                                className="badge text-white bg-danger position-absolute top-0 start-50"
-                                                style={{fontSize: '10px'}}>
-                                                {unreadNotify > 5 ? '5+' : unreadNotify}
-                                            </sup>
-                                            :
-                                            null
-                                        }
-                                    </button>
-                                    {!_.isEmpty(notifyList) ?
-                                        <div className="dropdown-menu dropdown-notify">
-                                            {notifyList.map(item => (
-                                                <Link to={`/${item.navigate}`}
-                                                      className="d-flex align-items-center py-2 px-3 dropdown-notify-item"
-                                                      key={item.id}>
-                                                    <img className="img-thumbnail rounded-circle"
-                                                         src={item.sender.avatar ? item.sender.avatar : image_default}
-                                                         alt="" width={50}
-                                                         style={{height: '50px'}}/>
-                                                    <div className="d-flex flex-column ms-3">
-                                                        <p className="mb-2 message-title">
-                                                            {item.message}
-                                                        </p>
-                                                        <small className="fst-italic" style={{fontSize: '12px'}}>
-                                                            <i className="bi bi-clock me-1"></i>{format(new Date(item.createAt), "dd/MM/yyyy")}
-                                                        </small>
-                                                    </div>
-                                                </Link>
-                                            ))}
-                                        </div>
-                                        :
-                                        <div className="dropdown-menu d-none"></div>
-                                    }
+                                <div className="nav-item ms-2 position-relative">
+                                    <label className="nav-link"
+                                           htmlFor={`${!_.isEmpty(exchangeDays) ? 'date-exchange' : 'date'}`}>
+                                        <i className="fa-regular fa-calendar-check"></i>
+                                        <span className="badge icon-calender position-absolute top-0">
+                                            {exchangeDays.length}
+                                        </span>
+                                    </label>
                                 </div>
+                                {!_.isEmpty(exchangeDays) &&
+                                    <DatePicker
+                                        minDate={new Date()}
+                                        holidays={exchangeDays}
+                                        id="date-exchange"
+                                        className="d-none"
+                                    />
+                                }
+                                { _.isEmpty(exchangeDays) &&
+                                    <DatePicker
+                                        minDate={new Date()}
+                                        id="date"
+                                        className="d-none"
+                                    />
+                                }
                             </div>
                         }
                     </div>

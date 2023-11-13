@@ -22,13 +22,22 @@ const Post = ({posts, totalPages, changePage}) => {
                                             </div>
                                             <div className="pt-4 px-3">
                                                 <h5 className="mb-2 text-center text-truncate">{post.title}</h5>
+                                                <p className="text-truncate mb-1">
+                                                    <i className="fa-solid fa-user me-2"></i>
+                                                    Người đăng: {post.account.username}
+                                                </p>
+                                                <p className="text-truncate mb-1">
+                                                    <i className="fa-solid fa-table-list me-2"></i>
+                                                    {post.requirement}
+                                                </p>
                                                 <div className="d-flex justify-content-between">
                                                     <p className="text-truncate">
                                                         <i className="fa fa-map-marker-alt me-2 color-primary"></i>
                                                         {post.address}
                                                     </p>
                                                     <p className="d-flex align-items-center">
-                                                        <i className="fa-regular fa-eye me-2"></i> {post.countView}
+                                                        <i className="fa-regular fa-eye me-2"></i>
+                                                        {post.countView}
                                                     </p>
                                                 </div>
                                             </div>

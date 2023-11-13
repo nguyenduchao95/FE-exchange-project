@@ -138,7 +138,7 @@ const PostDetail = () => {
                         </p>
 
                         <Link to={`/profile-user/${post.account?.id}`} className="mb-2 nav-link">
-                            <span className="fw-medium">Người đăng:</span> {post.account?.username}
+                            <span className="fw-medium">Người đăng:</span> <span className="text-danger">{post.account?.username}</span>
                         </Link>
 
                         <p className="mb-2">
