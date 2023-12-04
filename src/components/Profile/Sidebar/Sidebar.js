@@ -28,6 +28,14 @@ const Sidebar = () => {
                                 </NavLink>
                             </li>
 
+                            <li className="px-3 py-2">
+                                <NavLink to="/account/report-history"
+                                         className={({isActive}) => isActive ? "nav-link active" : "nav-link"}>
+                                    <i className="fa-solid fa-shield-cat me-3"></i>
+                                    <span className="hide-menu">Lịch sử báo cáo bài viết</span>
+                                </NavLink>
+                            </li>
+
                             {
                                 account.role?.name === 'ROLE_USER' ?
                                     <>

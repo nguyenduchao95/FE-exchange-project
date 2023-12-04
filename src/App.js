@@ -24,6 +24,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {changeLocationAccount, getAccountById} from "./service/accountService";
 import {editAccount, removeAccount} from "./redux/reducer/accountSlice";
 import SearchAroundHere from "./components/SearchAroundHere/SearchAroundHere";
+import ReportHistory from "./components/Profile/ReportHistory/ReportHistory";
 
 export const LocationContext = createContext(null)
 
@@ -72,6 +73,7 @@ function App() {
                 <Route path={"/account/"} element={<Profile/>}>
                     <Route path="information" element={<AccountInformation/>}/>
                     <Route path="change-password" element={<ChangePassword/>}/>
+                    <Route path="report-history" element={<ReportHistory/>}/>
                     <Route path="exchange-history" element={<ExchangeHistory/>}/>
                     <Route path="manage-posts-user" element={<PostListByAccount/>}/>
                     <Route path="manage-posts-admin" element={<PostList/>}/>

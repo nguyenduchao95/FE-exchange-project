@@ -8,7 +8,7 @@ import {getAllImagesByPostId} from "../../service/imageService";
 import {getPostById} from "../../service/postService";
 import {Pagination} from "@mui/material";
 import {useSelector} from "react-redux";
-import {getAllPostsByAccountId} from "../../service/accountService";
+import {getAllPostsByAccountId, getReportPostId, reportPost} from "../../service/accountService";
 import Swal from "sweetalert2";
 import {ErrorMessage, Field, Form, Formik} from "formik";
 import {exchangeSchema} from "../../validate/validate";
@@ -18,6 +18,7 @@ import {formatDate} from "../../service/format";
 const PostDetail = () => {
     const [images, setImages] = useState([]);
     const [post, setPost] = useState({});
+    const [report, setReport] = useState({});
     const [posts, setPosts] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [totalPages, setTotalPages] = useState(0);
@@ -39,12 +40,16 @@ const PostDetail = () => {
                     setImages([avatarImage, ...res.data]);
                 }).catch(error => console.log(error))
             }).catch(error => console.log(error))
+
+            getReportPostId(postId).then(response => {
+                setReport(response.data);
+            }).catch(error => console.log(error))
         }
         window.scrollTo({
             top: 0,
             behavior: 'smooth'
         })
-    }, [])
+    }, [postId])
 
     useEffect(() => {
         if (account.id) {
@@ -86,6 +91,80 @@ const PostDetail = () => {
         }
         setShowModal(true);
         setProduct({});
+    }
+
+    const handleReport = (post) => {
+        if (!account.id) {
+            Swal.fire({
+                title: 'Vui lòng đăng nhập để báo cáo bài viết!',
+                icon: 'error',
+                showConfirmButton: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    navigate('/login');
+                }
+            })
+            return;
+        }
+
+        if (post.account.id === account.id) {
+            Swal.fire({
+                title: 'Bạn là chủ của bài đăng này !',
+                icon: 'error',
+                showConfirmButton: true
+            }).then();
+            return;
+        }
+
+        Swal.fire({
+            title: `Xác nhận báo cáo bài viết ?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Xác nhận',
+            cancelButtonText: 'Đóng',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Nhập lý do báo cáo bài viết',
+                    input: 'text',
+                    inputAttributes: {
+                        autocapitalize: 'off'
+                    },
+                    showCancelButton: true,
+                    cancelButtonText: 'Đóng',
+                    confirmButtonText: 'Gửi',
+                    preConfirm: (value) => {
+                        if (!value) {
+                            Swal.showValidationMessage('Vui lòng không để trống')
+                        }
+                    }
+                }).then((rs) => {
+                    if (rs.isConfirmed) {
+                        const data = {
+                            reason: rs.value,
+                            post: post,
+                            account: {id: account.id}
+                        }
+                        reportPost(data).then(response => {
+                            Swal.fire({
+                                title: 'Báo cáo bài viết thành công !',
+                                icon: 'success',
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then();
+                        }).catch(error => {
+                            console.log(error);
+                            Swal.fire({
+                                title: 'Báo cáo bài viết thất bại !',
+                                icon: 'error',
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then();
+                        })
+                    }
+                })
+            }
+        })
     }
 
     const handleChangeProduct = (values) => {
@@ -137,8 +216,15 @@ const PostDetail = () => {
                             <span className="fw-medium">Trạng thái:</span> {post.status}
                         </p>
 
+                        {post.status === 'Vô hiệu hóa' && !_.isEmpty(report) &&
+                            <p className="mb-2">
+                                <span className="fw-medium">Lý do:</span> {report.reason}
+                            </p>
+                        }
+
                         <Link to={`/profile-user/${post.account?.id}`} className="mb-2 nav-link">
-                            <span className="fw-medium">Người đăng:</span> <span className="text-danger">{post.account?.username}</span>
+                            <span className="fw-medium">Người đăng:</span> <span
+                            className="text-danger">{post.account?.username}</span>
                         </Link>
 
                         <p className="mb-2">
@@ -180,6 +266,13 @@ const PostDetail = () => {
                                 </Link>
                                 :
                                 null
+                        }
+
+                        {post.status !== 'Vô hiệu hóa' &&
+                            <button className="btn btn-danger btn-lg mt-3 ms-3"
+                                    onClick={() => handleReport(post)}>
+                                <i className="fa-solid fa-shield-virus me-2"></i>Báo cáo bài viết
+                            </button>
                         }
                     </div>
                 }
