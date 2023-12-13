@@ -12,6 +12,7 @@ import {savePostSchema} from "../../../../validate/validate";
 import AvatarUpload from "../../AccountInfomation/Avatar/AvatarUpload";
 import {createPost, editPost} from "../../../../service/accountService";
 import {getAllCategories} from "../../../../service/categoryService";
+import axios from "axios";
 
 const SavePost = () => {
     const [avatarURL, setAvatarURL] = useState("");
@@ -31,7 +32,7 @@ const SavePost = () => {
     const imagesRef = useRef();
 
     useEffect(() => {
-        if (_.isEmpty(account)){
+        if (_.isEmpty(account)) {
             navigate("/403");
             return;
         }
@@ -75,6 +76,7 @@ const SavePost = () => {
         if (imagesRef) imagesRef.current.value = null;
     }
 
+
     const handleSavePost = (values) => {
         const data = {
             ...values,
@@ -89,41 +91,133 @@ const SavePost = () => {
             data.countView = post.countView;
             data.images = [...imagesURLEdit, ...imagesURL];
             data.imagesDelete = imagesURLDelete;
-            editPost(data).then(response => {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Cập nhật bài viết thành công !',
-                    showConfirmButton: false,
-                    timer: 1500
-                }).then();
-                navigate("/account/manage-posts-user");
+            let urls = [];
+            for (const img of data.images) {
+                urls.push(img.url);
+            }
+            axios.post("http://127.0.0.1:5000/predict", {"img_urls": urls}).then((response) => {
+                let check = true;
+                let results = response.data.data;
+                if (results.length === 0) {
+                    check = false;
+                } else {
+                    for (let i = 0; i < results.length; i++) {
+                        if (results[i].boxes.length === 0||results[i].boxes[0].confidence < 0.6) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Ứng dụng đang nghi ngờ ảnh của bạn không phải quần áo, vui lòng chọn ảnh rõ hơn !',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            check = false;
+                            setImagesURL([])
+
+                            break;
+                        }
+                    }
+                }
+                if (check) {
+                    editPost(data).then(response => {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Cập nhật bài viết thành công !',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then();
+                        navigate("/account/manage-posts-user");
+                    }).catch(error => {
+                        console.log(error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Cập nhật bài viết thất bại !',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then();
+                    })
+                }else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ứng dụng đang nghi ngờ ảnh của bạn không phải quần áo, vui lòng chọn ảnh rõ hơn !',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setImagesURL([])
+
+                }
             }).catch(error => {
-                console.log(error);
+                console.log(error)
                 Swal.fire({
                     icon: 'error',
-                    title: 'Cập nhật bài viết thất bại !',
+                    title: 'Check ảnh thất bại !',
                     showConfirmButton: false,
                     timer: 1500
-                }).then();
+                })
             })
+
+
         } else {
             data.images = imagesURL;
-            createPost(data).then(response => {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Thêm mới bài viết thành công !',
-                    showConfirmButton: false,
-                    timer: 1500
-                }).then();
-                navigate("/account/manage-posts-user");
+            let urls = [];
+            for (const img of imagesURL) {
+                urls.push(img.url);
+            }
+            axios.post("http://127.0.0.1:5000/predict", {"img_urls": urls}).then((response) => {
+                let check = true;
+                let results = response.data.data;
+                console.log("response.data")
+                console.log(response.data)
+                if (results.length === 0) {
+                    check = false;
+                } else {
+                    for (let i = 0; i < results.length; i++) {
+                        if (results[i].boxes.length === 0||results[i].boxes[0].confidence < 0.6) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Ứng dụng đang nghi ngờ ảnh của bạn không phải quần áo, vui lòng chọn ảnh rõ hơn !',
+                                showConfirmButton: false,
+                                timer: 1500
+                            })
+                            check = false;
+                            setImagesURL([])
+                            break;
+                        }
+                    }
+                }
+
+                if (check) {
+                    createPost(data).then(response => {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thêm mới bài viết thành công !',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then();
+                        navigate("/account/manage-posts-user");
+                    }).catch(error => {
+                        console.log(error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Thêm mới bài viết thất bại !',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then();
+                    })
+                }else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ứng dụng đang nghi ngờ ảnh của bạn không phải quần áo, vui lòng chọn ảnh rõ hơn !',
+                        showConfirmButton: false,
+                        timer: 1500
+                    })
+                    setImagesURL([])
+                }
             }).catch(error => {
-                console.log(error);
                 Swal.fire({
                     icon: 'error',
-                    title: 'Thêm mới bài viết thất bại !',
+                    title: 'Check ảnh thất bại !',
                     showConfirmButton: false,
                     timer: 1500
-                }).then();
+                })
             })
         }
     }
@@ -131,142 +225,143 @@ const SavePost = () => {
     return (
         <div className="container">
             {!_.isEmpty(post) &&
-                <Formik
-                    initialValues={{
-                        title: post.title,
-                        categoryPost: post.categoryPost,
-                        categoryProduct: post.categoryProduct?.id,
-                        address: post.address,
-                        description: post.description,
-                        requirement: post.requirement,
-                        avatar: avatarURL ? "is valid" : "",
-                        images: !_.isEmpty(imagesURLEdit) ? "is valid" : ""
-                    }}
-                    validationSchema={savePostSchema}
-                    onSubmit={values => {
-                        handleSavePost(values);
-                    }}>
-                    {({values}) => (
-                        <Form>
-                            <div className="row">
-                                <h2 className="text-center text-uppercase mb-5">{postId ? "Sửa đổi thông tin bài viết" : "Thêm bài viết mới"}</h2>
-                                <div className="mb-3 col-3">
-                                    <label htmlFor="title" className="form-label">
-                                        Tên bài viết <span className="text-danger">*</span>
-                                    </label>
-                                    <Field type="text" className="form-control" id="title" placeholder="Nhập tên bài viết"
-                                           name="title"/>
-                                    <ErrorMessage name="title" className="text-danger" component="small"/>
-                                </div>
-
-                                <div className="mb-3 col-3">
-                                    <label htmlFor="categoryProduct" className="form-label">
-                                        Danh mục sản phẩm <span className="text-danger">*</span>
-                                    </label>
-                                    <Field as="select" className="form-select" name="categoryProduct">
-                                        <option value="">---Vui lòng chọn---</option>
-                                        {!_.isEmpty(categories) && categories.map(item => (
-                                            <option value={item.id} key={item.id}>
-                                                {item.name}
-                                            </option>
-                                        ))}
-                                    </Field>
-                                    <ErrorMessage name="categoryProduct" className="text-danger" component="small"/>
-                                </div>
-
-                                <div className="mb-3 col-3">
-                                    <label htmlFor="categoryPost" className="form-label">
-                                        Danh mục bài viết <span className="text-danger">*</span>
-                                    </label>
-                                    <Field as="select" className="form-select" id="categoryPost" name="categoryPost">
-                                        <option value="">---Vui lòng chọn---</option>
-                                        <option value="Sản phẩm muốn trao đổi">Sản phẩm muốn trao đổi</option>
-                                        <option value="Sản phẩm cần tìm trao đổi">Sản phẩm cần tìm trao đổi</option>
-                                    </Field>
-                                    <ErrorMessage name="categoryPost" className="text-danger" component="small"/>
-                                </div>
-
-                                <div className="col-3 mb-3">
-                                    <label className="form-label" htmlFor="address">
-                                        Địa chỉ <span className="text-danger">*</span>
-                                    </label>
-                                    <Field className="form-control" id="address" type="text" name="address"
-                                           placeholder="Nhập địa chỉ chi tiết"/>
-                                    <ErrorMessage name="address" className="text-danger" component="small"/>
-                                </div>
-
-                                <div className="col-6 mb-3">
-                                    <label className="form-label" htmlFor="description">
-                                        Mô tả sản phẩm <span className="text-danger">*</span>
-                                    </label>
-                                    <Field as="textarea" className="form-control" id="description" name="description"
-                                           placeholder="Nhập mô tả sản phẩm"/>
-                                    <ErrorMessage name="description" className="text-danger" component="small"/>
-                                </div>
-
-                                <div className="col-6 mb-3">
-                                    <label className="form-label" htmlFor="requirement">
-                                        Yêu cầu <span className="text-danger">*</span>
-                                    </label>
-                                    <Field as="textarea" className="form-control" id="requirement" type="number"
-                                           name="requirement" placeholder="Nhập yêu cầu"/>
-                                    <ErrorMessage name="requirement" className="text-danger" component="small"/>
-                                </div>
-
-                                <div className="col-6 mb-3">
-                                    <label htmlFor="avatar" className="form-label">
-                                        Ảnh đại diện <span className="text-danger">*</span>
-                                    </label>
-                                    <input type="file" className="form-control" id="avatar" name="avatar"
-                                           ref={avatarRef} accept={"image/jpeg ,image/png"}
-                                           onChange={(event) => handleAvatarFile(event, values)}/>
-                                    <ErrorMessage name="avatar" className="text-danger" component="small"/>
-                                </div>
-
-                                <div className="col-6 mb-3">
-                                    <label htmlFor="images" className="form-label">
-                                        Ảnh giới thiệu chi tiết <span className="text-danger">*</span>
-                                    </label>
-                                    <input type="file" className="form-control" id="images" name="images"
-                                           multiple={true}
-                                           onChange={(event) => handleImagesFile(event, values)} ref={imagesRef} accept={"image/jpeg ,image/png"}/>
-                                    <ErrorMessage name="images" className="text-danger" component="small" />
-                                </div>
-
-                                <div className="col-md-6 form-group mb-3">
-                                    <AvatarUpload avatarURL={avatarURL} file={avatarFile} setAvatarURL={setAvatarURL}
-                                                  setAvatarFile={setAvatarFile} values={values} />
-                                </div>
-
-                                <div className="col-md-6 form-group mb-3">
-                                    {!_.isEmpty(imagesURLEdit) && imagesURLEdit.map((item, index) => (
-                                        <ImageItemEdit key={item.id} index={index} url={item.url}
-                                                       setImageURLEdit={setImagesURLEdit} values={values}
-                                                       imagesFile={imagesFile} setImagesURLDelete={setImagesURLDelete}/>
-                                    ))}
-
-                                    {!_.isEmpty(imagesFile) && imagesFile.map(file => (
-                                        <ImageItem file={file} setImagesFile={setImagesFile}
-                                                   setImagesURL={setImagesURL} key={file.name}
-                                                   imagesFile={imagesFile} values={values} postId={postId}/>
-                                    ))}
-
-                                </div>
-
-                                <div className="text-center my-3">
-                                    <button type="submit" className="btn btn-lg btn-primary me-3"
-                                            style={{minWidth: '120px'}}>
-                                        {postId ? "Cập nhật" : "Thêm bài viết"}
-                                    </button>
-                                    <Link to="/account/manage-posts-user" className="btn btn-lg btn-secondary"
-                                    style={{minWidth: '120px'}}>
-                                        Hủy
-                                    </Link>
-                                </div>
+            <Formik
+                initialValues={{
+                    title: post.title,
+                    categoryPost: post.categoryPost,
+                    categoryProduct: post.categoryProduct?.id,
+                    address: post.address,
+                    description: post.description,
+                    requirement: post.requirement,
+                    avatar: avatarURL ? "is valid" : "",
+                    images: !_.isEmpty(imagesURLEdit) ? "is valid" : ""
+                }}
+                validationSchema={savePostSchema}
+                onSubmit={values => {
+                    handleSavePost(values);
+                }}>
+                {({values}) => (
+                    <Form>
+                        <div className="row">
+                            <h2 className="text-center text-uppercase mb-5">{postId ? "Sửa đổi thông tin bài viết" : "Thêm bài viết mới"}</h2>
+                            <div className="mb-3 col-3">
+                                <label htmlFor="title" className="form-label">
+                                    Tên bài viết <span className="text-danger">*</span>
+                                </label>
+                                <Field type="text" className="form-control" id="title" placeholder="Nhập tên bài viết"
+                                       name="title"/>
+                                <ErrorMessage name="title" className="text-danger" component="small"/>
                             </div>
-                        </Form>
-                    )}
-                </Formik>
+
+                            <div className="mb-3 col-3">
+                                <label htmlFor="categoryProduct" className="form-label">
+                                    Danh mục sản phẩm <span className="text-danger">*</span>
+                                </label>
+                                <Field as="select" className="form-select" name="categoryProduct">
+                                    <option value="">---Vui lòng chọn---</option>
+                                    {!_.isEmpty(categories) && categories.map(item => (
+                                        <option value={item.id} key={item.id}>
+                                            {item.name}
+                                        </option>
+                                    ))}
+                                </Field>
+                                <ErrorMessage name="categoryProduct" className="text-danger" component="small"/>
+                            </div>
+
+                            <div className="mb-3 col-3">
+                                <label htmlFor="categoryPost" className="form-label">
+                                    Danh mục bài viết <span className="text-danger">*</span>
+                                </label>
+                                <Field as="select" className="form-select" id="categoryPost" name="categoryPost">
+                                    <option value="">---Vui lòng chọn---</option>
+                                    <option value="Sản phẩm muốn trao đổi">Sản phẩm muốn trao đổi</option>
+                                    <option value="Sản phẩm cần tìm trao đổi">Sản phẩm cần tìm trao đổi</option>
+                                </Field>
+                                <ErrorMessage name="categoryPost" className="text-danger" component="small"/>
+                            </div>
+
+                            <div className="col-3 mb-3">
+                                <label className="form-label" htmlFor="address">
+                                    Địa chỉ <span className="text-danger">*</span>
+                                </label>
+                                <Field className="form-control" id="address" type="text" name="address"
+                                       placeholder="Nhập địa chỉ chi tiết"/>
+                                <ErrorMessage name="address" className="text-danger" component="small"/>
+                            </div>
+
+                            <div className="col-6 mb-3">
+                                <label className="form-label" htmlFor="description">
+                                    Mô tả sản phẩm <span className="text-danger">*</span>
+                                </label>
+                                <Field as="textarea" className="form-control" id="description" name="description"
+                                       placeholder="Nhập mô tả sản phẩm"/>
+                                <ErrorMessage name="description" className="text-danger" component="small"/>
+                            </div>
+
+                            <div className="col-6 mb-3">
+                                <label className="form-label" htmlFor="requirement">
+                                    Yêu cầu <span className="text-danger">*</span>
+                                </label>
+                                <Field as="textarea" className="form-control" id="requirement" type="number"
+                                       name="requirement" placeholder="Nhập yêu cầu"/>
+                                <ErrorMessage name="requirement" className="text-danger" component="small"/>
+                            </div>
+
+                            <div className="col-6 mb-3">
+                                <label htmlFor="avatar" className="form-label">
+                                    Ảnh đại diện <span className="text-danger">*</span>
+                                </label>
+                                <input type="file" className="form-control" id="avatar" name="avatar"
+                                       ref={avatarRef} accept={"image/jpeg ,image/png"}
+                                       onChange={(event) => handleAvatarFile(event, values)}/>
+                                <ErrorMessage name="avatar" className="text-danger" component="small"/>
+                            </div>
+
+                            <div className="col-6 mb-3">
+                                <label htmlFor="images" className="form-label">
+                                    Ảnh giới thiệu chi tiết <span className="text-danger">*</span>
+                                </label>
+                                <input type="file" className="form-control" id="images" name="images"
+                                       multiple={true}
+                                       onChange={(event) => handleImagesFile(event, values)} ref={imagesRef}
+                                       accept={"image/jpeg ,image/png"}/>
+                                <ErrorMessage name="images" className="text-danger" component="small"/>
+                            </div>
+
+                            <div className="col-md-6 form-group mb-3">
+                                <AvatarUpload avatarURL={avatarURL} file={avatarFile} setAvatarURL={setAvatarURL}
+                                              setAvatarFile={setAvatarFile} values={values}/>
+                            </div>
+
+                            <div className="col-md-6 form-group mb-3">
+                                {!_.isEmpty(imagesURLEdit) && imagesURLEdit.map((item, index) => (
+                                    <ImageItemEdit key={item.id} index={index} url={item.url}
+                                                   setImageURLEdit={setImagesURLEdit} values={values}
+                                                   imagesFile={imagesFile} setImagesURLDelete={setImagesURLDelete}/>
+                                ))}
+
+                                {!_.isEmpty(imagesFile) && imagesFile.map(file => (
+                                    <ImageItem file={file} setImagesFile={setImagesFile}
+                                               setImagesURL={setImagesURL} key={file.name}
+                                               imagesFile={imagesFile} values={values} postId={postId}/>
+                                ))}
+
+                            </div>
+
+                            <div className="text-center my-3">
+                                <button type="submit" className="btn btn-lg btn-primary me-3"
+                                        style={{minWidth: '120px'}}>
+                                    {postId ? "Cập nhật" : "Thêm bài viết"}
+                                </button>
+                                <Link to="/account/manage-posts-user" className="btn btn-lg btn-secondary"
+                                      style={{minWidth: '120px'}}>
+                                    Hủy
+                                </Link>
+                            </div>
+                        </div>
+                    </Form>
+                )}
+            </Formik>
             }
         </div>
     );
